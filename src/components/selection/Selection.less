@@ -1,0 +1,76 @@
+.axi-select-copy {
+    width: 32px;
+    height: 32px;
+}
+
+.axi-select-reset {
+    height: 32px;
+    width: 32px;
+}
+
+.axi-select-controls {
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    right: 4px;
+    top: 4px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    width: 32px;
+    user-select: none;
+}
+
+.axi-select {
+    position: relative;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1 0 auto;
+}
+
+.axi-select-empty{
+    flex-grow: 1;
+}
+
+.list-selected {
+    width: 360px;
+    flex: none;
+    margin: 1em;
+    display: flex;
+    flex-direction: column;
+}
+
+.list-selected__list {
+    overflow-y: auto;
+    box-shadow: inset 0 0 4px 0 rgba(0, 0, 0, 0.4);
+    padding: 0.5em 1em;
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 auto;
+}
+
+.axi-select-container {
+    position: absolute;
+    left: 0;
+    right: 32px;
+    padding: 8px;
+    top: 0;
+    bottom: 0;
+    height: 100%;
+}
+
+.list-selected__list select {
+    overflow: auto;
+    border: none;
+    background-color: transparent;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.list-selected__list select:focus {
+    outline: none;
+}

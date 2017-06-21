@@ -1,0 +1,17 @@
+{
+	"extends": [ "tslint:recommended", "tslint-react" ],
+	"rules": {
+		"class-name": true,
+		"curly": true,
+		"interface-name": [ "never-prefix" ],
+		"jsx-alignment": true,
+		"jsx-boolean-value": [ "never" ],
+		"jsx-wrap-multiline": true,
+		"member-ordering": [ "instance-sandwich" ],
+		"no-duplicate-variable": true,
+		"no-unused-expression": true,
+		"no-unused-variable": true,
+		"semicolon": ["always"],
+		"triple-equals": true
+	}
+}
