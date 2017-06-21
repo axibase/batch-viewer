@@ -1,7 +1,5 @@
 import React from "react";
 
-import { Checkbox } from "@blueprintjs/core";
-
 export interface Option {
     id: string;
     value: string;

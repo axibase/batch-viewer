@@ -1,12 +1,10 @@
 import React, { Component } from "react";
-import { Debug } from "../../debug/index";
 
 import { CopyOptions } from "./CopyOptions";
-import { ObservableOption, Option, SelectionOption } from "./SelectionOption";
+import { Option, SelectionOption } from "./SelectionOption";
 
-import "./Selection.less";
 import { ClearAll } from "./ClearAll";
-import { bounds } from "../../utils/bounds";
+import "./Selection.less";
 
 export interface SelectionProps {
     options: Option[];
@@ -21,10 +19,8 @@ export interface SelectionState {
 type Props = SelectionProps;
 type State = SelectionState;
 
-@bounds("reset", "onOptionChange", "onChange")
 export class Selection extends Component<Props, State> {
     private root: HTMLElement;
-    private refRoot = (root) => {this.root = root};
 
     constructor(props: Props) {
         super(props);
@@ -34,7 +30,7 @@ export class Selection extends Component<Props, State> {
     }
 
     public render() {
-        let {readonly} = this.props;
+        const {readonly} = this.props;
         return (
             <div className="axi-select">
                 <div className="axi-select-controls">
@@ -57,7 +53,7 @@ export class Selection extends Component<Props, State> {
         this.setState({ selection })
     }
 
-    private reset() {
+    private reset = () => {
         this.setState(({selection}) => {
             if (selection.length !== 0) {
                 selection = []
@@ -72,12 +68,11 @@ export class Selection extends Component<Props, State> {
     }
 
     private get hasOptions(): boolean {
-        // tslint:disable-next-line:triple-equals
-        return (this.props.options != null) && this.props.options.length > 0;
+        return this.props.options && this.props.options.length > 0;
     }
 
     private get selectionOptions(): JSX.Element {
-        let options = this.props.options.map((option: Option) => (
+        const options = this.props.options.map((option: Option) => (
             <SelectionOption
                 key={option.id}
                 selected={this.state.selection.includes(option.id)}
@@ -94,10 +89,10 @@ export class Selection extends Component<Props, State> {
         )
     }
 
-    private onChange(evt) {
-        let select: HTMLElement = evt.target;
+    private onChange = (evt) => {
+        const select: HTMLElement = evt.target;
 
-        let selection = Array
+        const selection = Array
             .from(select.querySelectorAll("option"))
             .filter((option) => option.selected)
             .map((option) => option.value);
@@ -110,7 +105,7 @@ export class Selection extends Component<Props, State> {
         })
     }
 
-    private onOptionChange(optionId: string, on: boolean) {
+    private onOptionChange = (optionId: string, on: boolean) => {
         this.setState(({selection}: State) => {
             if (on) {
                 selection = [...selection, optionId]
@@ -124,6 +119,10 @@ export class Selection extends Component<Props, State> {
             onChange(options.filter(({id}) => selection.includes(id)));
         })
     }
+
+    private refRoot = (root) => {
+        this.root = root
+    };
 }
 
 export function NothingSelected({ itemName = "item" }) {

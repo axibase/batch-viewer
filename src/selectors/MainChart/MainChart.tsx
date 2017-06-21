@@ -1,13 +1,9 @@
 import React from "react";
-import { Debug } from "../../debug";
-import { reduceMax, reduceMin } from "../../utils/reduce";
+import { reduceMax, reduceMin } from "../../utils";
 
-import { Timechart } from "../../components/charts/Timechart/index";
-import { Selection } from "../../components/selection";
-import { Option } from "../../components/selection/SelectionOption";
-import { Section, Aside } from "../../components/section/index";
-import { Content } from "../../components/section/Content";
-import { bounds } from "../../utils/bounds";
+import { Timechart } from "../../components/charts";
+import { Aside, Content, Section } from "../../components/section";
+import { Option, Selection } from "../../components/selection";
 
 export interface MainChartState {
     selectedMetrics: Metric[];
@@ -27,12 +23,7 @@ export interface MainChartProps {
 type Props = MainChartProps;
 type State = MainChartState;
 
-@bounds("toggleCollapse")
 export class MainChart extends React.Component<Props, State> {
-    private static readonly DEFAULT = {};
-    private static readonly HIDDEN = Object.assign({}, MainChart.DEFAULT, { display: "none" });
-    private wasUpdated = false;
-
     constructor(props: Props) {
         super(props);
         this.state = {
@@ -48,8 +39,6 @@ export class MainChart extends React.Component<Props, State> {
     }
 
     public render() {
-        const { DEFAULT, HIDDEN } = MainChart;
-        const style = this.props.visible ? DEFAULT : HIDDEN;
         return (
             <Section>
                 <Content title="Timechart" collapsed={this.state.collapsed} onCollapse={this.toggleCollapse}>
@@ -75,7 +64,7 @@ export class MainChart extends React.Component<Props, State> {
         }
     }
 
-    private toggleCollapse() {
+    private toggleCollapse = () => {
         this.setState((state) => {
             return {
                 collapsed: !state.collapsed,
@@ -115,7 +104,6 @@ export class MainChart extends React.Component<Props, State> {
         const startTime = reduceMin(batches, (batch) => batch.startAt);
         const range =     reduceMax(batches, (batch) => batch.endAt - batch.startAt);
         const endTime   = startTime + range;
-        const rand = () => Math.floor(Math.random() * 256);
         const series = [];
         for (const metric of metrics) {
             for (const batch of batches) {
@@ -123,7 +111,6 @@ export class MainChart extends React.Component<Props, State> {
                 const label = metrics.length > 1 ? metric.label + ":" : "";
                 const batchId = batch.batchId;
                 series.push({
-                    // color: `rgb(${rand()}, ${rand()}, ${rand()})`,
                     label: unitId + label + batchId,
                     metric: metric.metric,
                     timeoffset: startTime - batch.startAt,

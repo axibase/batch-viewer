@@ -1,11 +1,5 @@
 import React from "react";
 import { Debug } from "../../debug/index";
-import { reduceMax, reduceMin } from "../../utils";
-import { bounds } from "../../utils/bounds";
-
-import Measure from "react-measure";
-import { Timechart } from "../charts/Timechart";
-import { Timeline } from "../charts/Timeline";
 
 import { AssetSelector, BatchChartSelector, MainChart } from "../../selectors";
 
@@ -36,7 +30,6 @@ const metrics = [
     },
 ]
 
-@bounds("onAssetsChange", "onBatchesChange")
 export class App extends React.Component<{}, AppState> {
     constructor(props) {
         super(props);
@@ -60,20 +53,30 @@ export class App extends React.Component<{}, AppState> {
                     assets={this.state.units}
                     onAssetSelectionChange={this.onAssetsChange}
                 />
-                {this.hasSelectedAssets &&
-                    <BatchChartSelector
-                        batches={this.state.batchesForAssets}
-                        selectedBatches={this.state.selectedBatches}
-                        onBatchSelectionChange={this.onBatchesChange}
-                    />
-                }
-                {this.hasSelectedBatches &&
-                    <MainChart
-                        metrics={metrics}
-                        batches={this.state.selectedBatches}
-                    />
-                }
+                {this.batchChart}
+                {this.mainChart}
             </div>
+        );
+    }
+
+    private get batchChart() {
+        if (!this.hasSelectedAssets) { return; }
+        return (
+            <BatchChartSelector
+                batches={this.state.batchesForAssets}
+                selectedBatches={this.state.selectedBatches}
+                onBatchSelectionChange={this.onBatchesChange}
+            />
+        );
+    }
+
+    private get mainChart() {
+        if (!this.hasSelectedBatches) { return; }
+        return (
+            <MainChart
+                metrics={metrics}
+                batches={this.state.selectedBatches}
+            />
         );
     }
 
@@ -85,7 +88,7 @@ export class App extends React.Component<{}, AppState> {
         return this.hasSelectedAssets && this.state.selectedBatches.length > 0;
     }
 
-    private onAssetsChange(selectedAssets: Asset[]) {
+    private onAssetsChange = (selectedAssets: Asset[]) => {
         function inAssets({ unit }: Batch) {
             const idMatches = ({ unitId }) => unit === unitId;
             const position = selectedAssets.findIndex(idMatches);
@@ -105,7 +108,7 @@ export class App extends React.Component<{}, AppState> {
         });
     }
 
-    private onBatchesChange(selectedBatches: Batch[]) {
+    private onBatchesChange = (selectedBatches: Batch[]) => {
         this.setState({ selectedBatches }, () => {
             Debug.table("App :: Selected batches changed", this.state.selectedBatches);
         });

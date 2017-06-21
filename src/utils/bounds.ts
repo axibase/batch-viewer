@@ -1,4 +1,4 @@
-export function bounds<T>(...methods: string[]): ClassDecorator {
+export function bounds(...methods: string[]): ClassDecorator {
     // tslint:disable-next-line:only-arrow-functions
     return function <T extends {new(...args: any[]): any}>(target: T) {
         return class extends target {

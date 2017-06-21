@@ -6,8 +6,9 @@
         "jsx": "react",
         "lib": [ "es5", "dom", "es6", "es7"],
         "moduleResolution": "node",
+        "noUnusedLocals": true,
         "outDir": "build/scripts",
-        // "rootDir": "./src",
+        "rootDir": "src",
         "sourceMap": true,
         "target": "es5"
     },

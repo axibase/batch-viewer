@@ -30,29 +30,24 @@ function createOptions(entries: any[], keyFunc, format, sorted) {
     ))
 }
 
-export const MultiSelect = (props) => (
-
-    <div className="axi-multiselect">
-        <label className="pt-label">
-            {props.label}
-            <div>
-                <select
-                    multiple
-                    onChange={(evt) => {props.onChange(getMultiselectValue(evt.target))}}
-                    value={props.selected || []}
-                >
-                    {
-                        props.default && (
-                        <option default disabled hidden>
-                            {props.default}
-                        </option>
-                        )
-                    }
-                    {
-                        createOptions(props.entries, props.keyFunc, props.format, props.sorted)
-                    }
-                </select>
-            </div>
-        </label>
-    </div>
-);
+export const MultiSelect = (props) => {
+    const onSelectionChange = (evt) => {
+        props.onChange(getMultiselectValue(evt.target))
+    }
+    return (
+        <div className="axi-multiselect">
+            <label className="pt-label">
+                {props.label}
+                <div>
+                    <select
+                        multiple
+                        onChange={onSelectionChange}
+                        value={props.selected || []}
+                    >
+                    {createOptions(props.entries, props.keyFunc, props.format, props.sorted)}
+                    </select>
+                </div>
+            </label>
+        </div>
+    );
+};

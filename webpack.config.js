@@ -1,51 +1,54 @@
-import * as path from "path";
-import * as process from "process";
-import * as webpack from "webpack";
+var path = require("path");
+var process = require("process");
+var webpack = require("webpack");
 
-enum Mode { DEBUG, RELEASE }
+var Mode;
 
-namespace Mode {
+(function (Mode) {
+    Mode[Mode["DEBUG"] = 0] = "DEBUG";
+    Mode[Mode["RELEASE"] = 1] = "RELEASE";
+})(Mode || (Mode = {}));
+
+(function (Mode) {
     function isProduction() {
-        return process.argv.indexOf("-p") >= 0 
+        return process.argv.indexOf("-p") >= 0
             || process.env.NODE_ENV === "production";
     }
-    export const current   =  isProduction() ? Mode.RELEASE : Mode.DEBUG;
-    export const isDebug   = current === Mode.DEBUG;
-    export const isRelease = current === Mode.RELEASE;
-}
+    Mode.current = isProduction() ? Mode.RELEASE : Mode.DEBUG;
+    Mode.isDebug = Mode.current === Mode.DEBUG;
+    Mode.isRelease = Mode.current === Mode.RELEASE;
+})(Mode || (Mode = {}));
 
 console.log("Building mode:", Mode[Mode.current]);
 
-
-const devPlugins = Mode.isRelease ? [] : [
+var devPlugins = Mode.isRelease ? [] : [
     new webpack.HotModuleReplacementPlugin(),
     new webpack.DefinePlugin({
         __debug: "true",
-        __release: "false",
+        __release: "false"
     })
-]
+];
 
-const prodPlugins = Mode.isDebug ? [] : [
+var prodPlugins = Mode.isDebug ? [] : [
     new webpack.DefinePlugin({
         __debug: "false",
-        __release: "true",
+        __release: "true"
     }),
-]
+];
 
-const config: webpack.Configuration = {
+module.exports = {
     entry: {
         "app": "./src/main.tsx",
-        "es6-shim": "es6-shim",
-        // sandbox: "./src/sandbox.tsx",
+        "es6-shim": "es6-shim"
     },
     output: {
         filename: "[name].js",
         path: path.resolve(__dirname, "./build"),
-        publicPath: "/",
+        publicPath: "/"
     },
     devtool: "source-map",
     resolve: {
-        extensions: [".js", ".json", ".ts", ".tsx"],
+        extensions: [".js", ".json", ".ts", ".tsx"]
     },
     module: {
         rules: [
@@ -53,13 +56,13 @@ const config: webpack.Configuration = {
                 test: /\.tsx?$/,
                 loader: "awesome-typescript-loader",
                 options: {
-                    module: "es6",
-                },
+                    module: "es6"
+                }
             },
             {
                 test: /\.js$/,
                 loader: "source-map-loader",
-                enforce: "pre",
+                enforce: "pre"
             },
             {
                 test: /\.js$/,
@@ -67,19 +70,19 @@ const config: webpack.Configuration = {
                 include: /(charts)/,
                 exclude: /(components|\.min\.)/,
                 options: {
-                    presets: ["es2015"],
-                },
+                    presets: ["es2015"]
+                }
             },
             {
                 test: /\.css$/,
                 use: [
                     {
-                        loader: "style-loader",
+                        loader: "style-loader"
                     },
                     {
                         loader: "css-loader",
                         options: {
-                            sourceMap: true,
+                            sourceMap: true
                         }
                     },
                 ]
@@ -88,21 +91,21 @@ const config: webpack.Configuration = {
                 test: /\.less$/,
                 use: [
                     {
-                        loader: "style-loader",
+                        loader: "style-loader"
                     },
                     {
                         loader: "css-loader",
                         options: {
-                            sourceMap: true,
+                            sourceMap: true
                         }
                     },
                     {
                         loader: "less-loader",
                         options: {
-                            sourceMap: true,
+                            sourceMap: true
                         }
                     },
-                ],
+                ]
             },
             {
                 test: /\.(eot|svg|ttf|TTF|woff|woff2|png)$/,
@@ -110,28 +113,24 @@ const config: webpack.Configuration = {
                 options: {
                     name: "[name].[ext]",
                     // publicPath: "/assets/",
-                    outputPath: "assets/",
-                },
+                    outputPath: "assets/"
+                }
             },
-        ],
+        ]
     },
     devServer: {
         contentBase: path.resolve(__dirname, "./build"),
         hot: true,
         // historyApiFallback: true,
         inline: true,
-        port: 9000,
+        port: 9000
     },
-    plugins: [
-        ...devPlugins,
-        ...prodPlugins,
+    plugins: devPlugins.concat(prodPlugins, [
         new webpack.ProvidePlugin({
             $: "jquery",
             crossfilter: "crossfilter",
             d3: "d3",
-            jQuery: "jquery",
+            jQuery: "jquery"
         }),
-    ],
-}
-
-export default config;
+    ])
+};
