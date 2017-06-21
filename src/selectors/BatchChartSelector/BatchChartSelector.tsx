@@ -7,17 +7,13 @@ import { ClearAll } from "../../components/selection/ClearAll";
 import { Option } from "../../components/selection/SelectionOption";
 
 export interface BatchChartSelectorState {
-    selectedBatchOptions: Option[];
+    selectedBatches: Batch[];
     collapsed: boolean;
-    forceUpdate?: boolean;
 }
 
 export interface BatchChartSelectorProps {
     batches: Batch[];
-    selectedBatches: Batch[];
     onBatchSelectionChange?: (batches: Batch[]) => void;
-    // TODO: Take this shit out of there!!!
-    visible?: boolean;
 }
 
 type Props = BatchChartSelectorProps;
@@ -26,10 +22,8 @@ type State = BatchChartSelectorState;
 export class BatchChartSelector extends React.Component<Props, State> {
     public state: State = {
         collapsed: false,
-        selectedBatchOptions: []
+        selectedBatches: [],
     };
-
-    private requestForceUpdate: boolean;
 
     public render() {
         return (
@@ -42,8 +36,7 @@ export class BatchChartSelector extends React.Component<Props, State> {
                     <Timeline
                         className="pt-card pt-elevation-0 axi-timeline-container"
                         batches={this.props.batches}
-                        onBatchSelectionChange={this.onBatchesChange}
-                        selectedBatches={this.props.selectedBatches}
+                        onBatchSelectionChange={this.onSelectedBatchesChange}
                     />
                     <ClearAll
                         visible
@@ -65,43 +58,35 @@ export class BatchChartSelector extends React.Component<Props, State> {
     }
 
     public componentWillReceiveProps(nextProps: Props) {
-        if (this.state.collapsed) {
-            this.requestForceUpdate = true;
+        if (this.props.batches !== nextProps.batches) {
+            this.reset();
         }
     }
 
     private get batchOptions(): Option[] {
-        return this.createBatchOptions(this.props.selectedBatches);
-    }
-
-    private toggleCollapse = () => {
-        this.setState(({collapsed}) => ({collapsed: !collapsed, forceUpdate: this.requestForceUpdate}));
-    }
-
-    private reset = () => {
-        if (this.state.selectedBatchOptions.length === 0) {
-            return;
-        }
-        this.setState({ selectedBatchOptions: []}, () => {
-            this.props.onBatchSelectionChange([]);
-        })
-    }
-
-    private onBatchesChange = (batches: Batch[]) => {
-        const selectedBatchOptions = this.createBatchOptions(batches);
-        if (this.state.selectedBatchOptions.length === 0 && selectedBatchOptions.length === 0) {
-            return;
-        }
-        this.setState({ selectedBatchOptions }, () => {
-            this.props.onBatchSelectionChange(batches);
-        })
-    }
-
-    private createBatchOptions(batches: Batch[]): Option[] {
-        return batches.map((batch) => ({
+        return this.state.selectedBatches.map<Option>((batch) => ({
             data: batch,
             id: batch.batchId,
             value: batch.batchId,
         }));
+    }
+
+    private toggleCollapse = () => {
+        this.setState(({collapsed}) => ({collapsed: !collapsed}));
+    }
+
+    private reset = () => {
+        if (this.state.selectedBatches.length === 0) {
+            return;
+        }
+        this.setState({selectedBatches: []}, () => {
+            this.props.onBatchSelectionChange([]);
+        })
+    }
+
+    private onSelectedBatchesChange = (batches: Batch[]) => {
+        this.setState({selectedBatches: batches}, () => {
+            this.props.onBatchSelectionChange(batches);
+        })
     }
 }
