@@ -1,5 +1,5 @@
 import React from "react";
-import { Debug } from "../../debug";
+import * as Debug from "../../debug";
 
 import { AssetSelector, BatchChartSelector, MainChart } from "../../selectors";
 
@@ -108,8 +108,7 @@ export class App extends React.Component<{}, AppState> {
     }
 
     private onBatchesChange = (selectedBatches: Batch[]) => {
-        this.setState({ selectedBatches }, () => {
-            Debug.table("App :: Selected batches changed", this.state.selectedBatches);
-        });
+        this.setState({ selectedBatches });
+        Debug.table("App :: Selected batches changed", this.state.selectedBatches);
     }
 }

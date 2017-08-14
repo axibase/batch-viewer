@@ -4,14 +4,14 @@ import "./main.less";
 
 import React from "react";
 import ReactDOM from "react-dom";
-import { Debug } from "./debug";
+import * as Debug from "./debug";
 
 import { App } from "./components/app/App";
 
-Debug.exec(() => {
-    const {whyDidYouUpdate} = require("why-did-you-update")
-    whyDidYouUpdate(React)
-});
+// Debug.exec(() => {
+//     const {whyDidYouUpdate} = require("why-did-you-update")
+//     whyDidYouUpdate(React)
+// });
 
 const appRoot = document.querySelector("#root");
 

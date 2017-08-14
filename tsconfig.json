@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
         "allowJs": true,
+        "pretty": true,
         "allowSyntheticDefaultImports": true,
         "experimentalDecorators": true,
         "jsx": "react",

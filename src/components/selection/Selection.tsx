@@ -1,19 +1,20 @@
 import React, { Component } from "react";
 
 import { CopyOptions } from "./CopyOptions";
-import { Option, SelectionOption } from "./SelectionOption";
+import { Option } from "./SelectionOption";
 
 import { ClearAll } from "./ClearAll";
 import "./Selection.less";
 
 export interface SelectionProps {
     options: Option[];
+    value: string[];
     onChange?: (options: Option[]) => void;
     readonly?: boolean;
 }
 
 export interface SelectionState {
-    selection: string[];
+    // selection: string[];
 }
 
 type Props = SelectionProps;
@@ -21,14 +22,6 @@ type State = SelectionState;
 
 export class Selection extends Component<Props, State> {
     private root: HTMLElement;
-
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            selection: this.createSelection(props.options),
-        }
-    }
-
     public render() {
         const {readonly} = this.props;
         return (
@@ -44,45 +37,36 @@ export class Selection extends Component<Props, State> {
         );
     }
 
-    public componentWillReceiveProps({ options }: Props, nextContext: any) {
-        if (options === this.props.options) {
-            return;
-        }
-        // Select all incoming options
-        const selection = this.createSelection(options);
-        this.setState({ selection })
-    }
+    // public componentWillReceiveProps({ options }: Props, nextContext: any) {
+    //     if (options === this.props.options) {
+    //         return;
+    //     }
+    //     // Select all incoming options
+    //     const selection = this.createSelection(options);
+    //     this.setState({ selection })
+    // }
 
     private reset = () => {
-        this.setState(({selection}) => {
-            if (selection.length !== 0) {
-                selection = []
-                this.props.onChange([]);
-            }
-            return { selection }
-        })
-    }
-
-    private createSelection(options: Option[]) {
-        return options.map((option) => option.id);
+        this.onSelectionChange([])
     }
 
     private get hasOptions(): boolean {
-        return this.props.options && this.props.options.length > 0;
+        return this.props.options.length > 0;
     }
 
     private get selectionOptions(): JSX.Element {
         const options = this.props.options.map((option: Option) => (
-            <SelectionOption
-                key={option.id}
-                selected={this.state.selection.includes(option.id)}
-                onChange={this.onOptionChange}
-                {...option}
-            />
+            <option key={option.id} value={option.id}>{option.value}</option>
+            // <SelectionOption
+            //     key={option.id}
+            //     selected={this.props.value.includes(option.id)}
+            //     onChange={this.onOptionChange}
+            //     {...option}
+            // />
         ));
         return (
             <div className="axi-select-container">
-                <select multiple value={this.state.selection} onChange={this.onChange}>
+                <select multiple value={this.props.value} onChange={this.onChange}>
                     {options}
                 </select>
             </div>
@@ -97,28 +81,33 @@ export class Selection extends Component<Props, State> {
             .filter((option) => option.selected)
             .map((option) => option.value);
 
-        this.setState({selection}, () => {
-            const { options, onChange, readonly } = this.props;
-            if (!readonly) {
-                onChange(options.filter(({id}) => selection.includes(id)));
-            }
-        })
+        this.onSelectionChange(selection);
     }
 
-    private onOptionChange = (optionId: string, on: boolean) => {
-        this.setState(({selection}: State) => {
-            if (on) {
-                selection = [...selection, optionId]
-            } else {
-                selection = selection.filter((id) => id !== optionId);
-            }
-            return { selection }
-        }, () => {
-            const { options, onChange } = this.props;
-            const { selection } = this.state;
-            onChange(options.filter(({id}) => selection.includes(id)));
-        })
+    private onSelectionChange(value: string[]) {
+        const { options, onChange, readonly } = this.props;
+        if (!readonly) {
+            onChange(options.filter(({id}) => value.includes(id)));
+        }
     }
+
+    // private onOptionChange = (optionId: string, on: boolean) => {
+    //     let selection = this.props.value;
+    //     // this.setState(({selection}: State) => {
+    //     if (on) {
+    //         selection = [...selection, optionId]
+    //     } else {
+    //         selection = selection.filter((id) => id !== optionId);
+    //     }
+    //     this.onChange(selection);
+    //     //     return { selection }
+    //     // });
+    //     // (() => {
+    //     //     const { options, onChange } = this.props;
+    //     //     const { selection } = this.state;
+    //     //     onChange(options.filter(({id}) => selection.includes(id)));
+    //     // })()
+    // }
 
     private refRoot = (root) => {
         this.root = root

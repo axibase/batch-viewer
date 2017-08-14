@@ -1,23 +1,24 @@
 import React from "react";
-import { Debug } from "../../debug";
+import * as Debug from "../../debug";
 
 import { MultiSelect } from "../../components/multiselect";
 import { Aside, Content, Section } from "../../components/section";
 import { Option, Selection } from "../../components/selection";
 
-export interface AssetSelectorState {
-    sites: string[];
-    selectedSites: string[];
-    collapsed: boolean;
-    buildings: string[];
-    selectedBuildings: string[];
-    selectedAssets: Asset[];
-    assetOptions: Option[];
-}
-
 export interface AssetSelectorProps {
     assets: Asset[];
     onAssetSelectionChange?: (assets: Asset[]) => void;
+}
+
+export interface AssetSelectorState {
+    assetOptions: Option[];
+    collapsed: boolean;
+    selectedAssets: string[];
+    selectedBuildings: string[];
+    selectedSites: string[];
+    sites: string[];
+    visibleAssets: Asset[];
+    visibleBuildings: string[];
 }
 
 type Props = AssetSelectorProps;
@@ -28,32 +29,30 @@ export class AssetSelector extends React.Component<Props, State> {
         super(props);
         this.state = {
             assetOptions: [],
-            buildings: [],
             collapsed: false,
             selectedAssets: [],
             selectedBuildings: [],
             selectedSites: [],
             sites: getDistinct(props.assets, (unit) => unit.site),
+            visibleAssets: [],
+            visibleBuildings: [],
         };
-
-        this.filterSites    = this.filterSites.bind(this);
-        this.filterBuildings = this.filterBuildings.bind(this);
-        this.toggleCollapse = this.toggleCollapse.bind(this);
-        this.onAssetSelectionChange = this.onAssetSelectionChange.bind(this);
     }
 
     public componentWillMount() {
-        const savedSites = localStorage.getItem("axi-demo-selected-sites");
-        Debug.info("Loaded site selection:", savedSites);
+        if (process.env.NODE_ENV === "production") {
+            const savedSites = localStorage.getItem("axi-demo-selected-sites");
+            Debug.info("Loaded site selection:", savedSites);
 
-        const savedBuildings = localStorage.getItem("axi-demo-selected-buildings");
-        Debug.info("Loaded building selection:", savedBuildings);
+            const savedBuildings = localStorage.getItem("axi-demo-selected-buildings");
+            Debug.info("Loaded building selection:", savedBuildings);
 
-        const selectedSites = savedSites ? savedSites.split(",") : [];
-        const selectedBuildings = savedBuildings ? savedBuildings.split(",") : [];
+            const selectedSites = savedSites ? savedSites.split(",") : [];
+            const selectedBuildings = savedBuildings ? savedBuildings.split(",") : [];
 
-        this.filterSites(selectedSites);
-        this.filterBuildings(selectedBuildings);
+            this.filterSites(selectedSites);
+            this.filterBuildings(selectedBuildings);
+        }
     }
 
     public render() {
@@ -73,7 +72,7 @@ export class AssetSelector extends React.Component<Props, State> {
                             sorted
                             label="Building"
                             default="Select building"
-                            entries={this.state.buildings}
+                            entries={this.state.visibleBuildings}
                             selected={this.state.selectedBuildings}
                             onChange={this.filterBuildings}
                         />
@@ -81,7 +80,8 @@ export class AssetSelector extends React.Component<Props, State> {
                 </Content>
                 <Aside title="Assets" collapsed={this.state.collapsed}>
                     <Selection
-                        options={this.state.assetOptions}
+                        options={this.assetOptions}
+                        value={this.state.selectedAssets}
                         onChange={this.onAssetSelectionChange}
                     />
                 </Aside>
@@ -89,89 +89,65 @@ export class AssetSelector extends React.Component<Props, State> {
         )
     }
 
-    private toggleCollapse() {
-        this.setState(({collapsed}) => ({collapsed: !collapsed}));
-    }
-
-    private createAssetOptions(assets: Asset[]): Option[] {
-        return assets.map((asset) => ({
+    private get assetOptions(): Option[] {
+        return this.state.visibleAssets.map((asset) => ({
             data: asset,
             id: asset.unitId,
             value: asset.unitId,
         }));
     }
 
-    private onAssetSelectionChange(options: Option[]) {
-        const assets = options.map((option) => option.data);
+    private toggleCollapse = () => {
+        this.setState(({collapsed}) => ({collapsed: !collapsed}));
+    }
+
+    private onAssetSelectionChange = (options: Option[]) => {
+        const assets = options.map((option) => option.data) as Asset[];
         this.handleSelectionChange(assets);
+        this.setState({selectedAssets: assets.map((asset) => asset.unitId)})
     }
 
-    private filterBuildings(buildings: string[]) {
-        this.setState((state: State, props: Props) => {
-            const selectedAssets = filterAssets(props.assets, state.selectedSites, buildings);
-            const selectedBuildings = buildings.slice();
-            const assetOptions = this.createAssetOptions(selectedAssets);
+    private filterSites = (sites: string[]) => {
+        const unitsBySite = filterAssets(this.props.assets, sites);
+        const visibleBuildings = getDistinct(unitsBySite, (unit) => unit.building);
 
-            Debug.table("Top Level :: Selected buildings", buildings);
-            this.handleSelectionChange(selectedAssets, props);
+        localStorage.setItem("axi-demo-selected-sites", sites.join(","));
+        Debug.info("AssetSelector :: Saved site selection:", sites.join(","));
+        localStorage.setItem("axi-demo-selected-buildings", "");
+        Debug.info("AssetSelector :: Saved buildings:", "nothing");
 
-            localStorage.setItem("axi-demo-selected-buildings", buildings.join(","));
-            Debug.info("TopLevel :: Saved building selection:", buildings.join(","));
+        this.handleSelectionChange([]);
 
-            return {
-                assetOptions,
-                selectedAssets,
-                selectedBuildings,
-            }
-        })
-    }
-
-    private filterSites(sites: string[]) {
-        let selectionChanged = false;
-        this.setState((state: State, props: Props) => {
-            const selectedSites = sites.slice();
-            const unitsBySite = filterAssets(props.assets, sites);
-            const buildings = getDistinct(unitsBySite, (unit) => unit.building);
-
-            const newState: Partial<State> = {
-                assetOptions: [],
-                buildings,
-                selectedSites,
-            }
-
-            if  (state.selectedBuildings.length > 0) {
-                newState.selectedBuildings = [];
-            }
-
-            if  (state.selectedAssets.length > 0) {
-                selectionChanged = true;
-                newState.selectedAssets = [];
-            }
-
-            return newState;
-        }, () => {
-            const {
-                selectedAssets,
-                selectedBuildings,
-                selectedSites,
-            } = this.state;
-
-            localStorage.setItem("axi-demo-selected-sites", selectedSites.join(","));
-            Debug.info("AssetSelector :: Saved site selection:", selectedSites.join(","));
-            localStorage.setItem("axi-demo-selected-buildings", selectedBuildings.join(","));
-            Debug.info("AssetSelector :: Saved buildings:", selectedBuildings.join(","));
-
-            if (selectionChanged) {
-                this.handleSelectionChange(selectedAssets);
-            }
+        this.setState({
+            selectedAssets: [],
+            selectedBuildings: [],
+            selectedSites: sites,
+            visibleAssets: [],
+            visibleBuildings,
         });
     }
 
-    private handleSelectionChange(units: Asset[], props?: Props) {
-        props = props || this.props;
-        Debug.table("TopLevel :: Unit selection changed", units);
-        if (props.onAssetSelectionChange) {
-            props.onAssetSelectionChange(units)
+    private filterBuildings = (buildings: string[]) => {
+        const visibleAssets = filterAssets(this.props.assets, this.state.selectedSites, buildings);
+        const selectedBuildings = buildings.slice();
+        localStorage.setItem("axi-demo-selected-buildings", buildings.join(","));
+        Debug.info("TopLevel :: Saved building selection:", buildings.join(","));
+
+        this.handleSelectionChange([]);
+
+        this.setState({
+            selectedAssets: [],
+            visibleAssets,
+            selectedBuildings,
+        });
+
+        Debug.table("Top Level :: Selected buildings", buildings);
+    }
+
+    private handleSelectionChange(units: Asset[]) {
+        Debug.table("AssetSelector :: Unit selection changed", units);
+        if (this.props.onAssetSelectionChange) {
+            this.props.onAssetSelectionChange(units)
         }
     }
 }

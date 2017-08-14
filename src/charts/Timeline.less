@@ -1,0 +1,171 @@
+@batch-color-dark: rgba(67, 80, 80, 1);
+@text-color-light: white;
+
+.widget .axi-tooltip {
+    position: absolute !important;
+}
+
+.axi-batch-timeline text {
+    user-select: text;
+} 
+
+.axi-tooltip-container .axi-tooltip {
+    position: fixed !important;
+}
+
+@import (once) "charts.min.css";
+
+.axis-time {
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+.tick line,
+.domain {
+    fill: none;
+    stroke: black;
+}
+.tick text {
+    stroke: none;
+}
+
+.batch-length {
+    fill: black;
+    fill-opacity: 0.1;
+}
+
+.batch-label rect {
+    fill: @batch-color-dark;
+}
+
+.mini .batch__selected rect,
+.batch__selected .batch-label rect {
+    fill: blueviolet;
+}
+
+.batch-label text {
+    fill: @text-color-light;
+}
+
+.batch {
+    fill: @batch-color-dark;
+    cursor: pointer;
+}
+
+.lane--hidden {
+    opacity: 0.1;
+}
+
+.tick,
+.axi-tooltip {
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+
+.plot__laneaxis-tick {
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    cursor: pointer;
+}
+
+.procedure.procedure__hidden text,
+.procedure.procedure__hidden rect {
+    fill: none;
+}
+
+.pan {
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    cursor: move;
+    cursor: -webkit-grab;
+}
+.pan:active {
+    cursor: ew-resize;
+    cursor: -webkit-grabbing;
+}
+
+.zoom {
+    cursor: move;
+    fill: none;
+    pointer-events: all;
+}
+
+.axi-tooltip {
+    z-index: 100;
+    white-space: normal;
+}
+
+
+.axi-batch-tooltip .axi-tooltip-inner {
+    white-space: normal;
+    text-align: left;
+    padding: 1ex;
+}
+
+.axi-batch-tooltip__batch-id {
+    font-weight: bold;
+    font-weight: medium;
+}
+.axi-batch-tooltip__unit-id {
+    color: slategray;
+    margin-bottom: 1ex;
+}
+
+.axi-batch-tooltip__procedures {
+    color: darkslategrey;
+    margin-top: 2ex;
+}
+
+.axi-timeline-controls {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.axi-timeline-control {
+    padding: 16px;
+    margin: 8px;
+    flex: 1 0 auto;
+    border-radius: 4px;
+    border: 1px solid lightgray;
+    max-height: 144px;
+}
+
+.axi-timeline-control select {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+.axi-timeline-control input {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.slider-container {
+    padding: 1ex;
+    text-align: center;
+}
+.slider {
+    margin: 0 2ex;
+}
+
+.tick {
+    font: 10px sans-serif;
+}
+
+.axi-timeline-control .slider-handle {
+    background-color: #666;
+    background-image: -webkit-linear-gradient(top, #777 0%, #555 100%);
+    background-image: linear-gradient(top, #777 0%, #555 100%);
+}

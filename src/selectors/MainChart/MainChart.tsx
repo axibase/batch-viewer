@@ -50,6 +50,7 @@ export class MainChart extends React.Component<Props, State> {
                     <Selection
                         options={this.state.options}
                         onChange={this.onMetricsChange}
+                        value={this.state.selectedMetrics.map(m => m.metric)}
                     />
                 </Aside>
             </Section>

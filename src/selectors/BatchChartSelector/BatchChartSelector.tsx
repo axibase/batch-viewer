@@ -1,19 +1,18 @@
-import React from "react";
+import * as React from "react";
 
 import { Timeline } from "../../components/charts";
-import { Aside, Content, Section } from "../../components/section/index";
-import { Selection } from "../../components/selection";
+import { Aside, Content, Section } from "../../components/section";
+import { Option, Selection } from "../../components/selection";
 import { ClearAll } from "../../components/selection/ClearAll";
-import { Option } from "../../components/selection/SelectionOption";
-
-export interface BatchChartSelectorState {
-    selectedBatches: Batch[];
-    collapsed: boolean;
-}
 
 export interface BatchChartSelectorProps {
     batches: Batch[];
     onBatchSelectionChange?: (batches: Batch[]) => void;
+}
+
+export interface BatchChartSelectorState {
+    collapsed: boolean;
+    selectedBatches: Batch[];
 }
 
 type Props = BatchChartSelectorProps;
@@ -36,6 +35,7 @@ export class BatchChartSelector extends React.Component<Props, State> {
                     <Timeline
                         className="pt-card pt-elevation-0 axi-timeline-container"
                         batches={this.props.batches}
+                        selectedBatches={this.state.selectedBatches}
                         onBatchSelectionChange={this.onSelectedBatchesChange}
                     />
                     <ClearAll
@@ -51,6 +51,7 @@ export class BatchChartSelector extends React.Component<Props, State> {
                     <Selection
                         readonly
                         options={this.batchOptions}
+                        value={this.state.selectedBatches.map(batch => batch.batchId)}
                     />
                 </Aside>
             </Section>
@@ -76,17 +77,11 @@ export class BatchChartSelector extends React.Component<Props, State> {
     }
 
     private reset = () => {
-        if (this.state.selectedBatches.length === 0) {
-            return;
-        }
-        this.setState({selectedBatches: []}, () => {
-            this.props.onBatchSelectionChange([]);
-        })
+        this.onSelectedBatchesChange([]);
     }
 
     private onSelectedBatchesChange = (batches: Batch[]) => {
-        this.setState({selectedBatches: batches}, () => {
-            this.props.onBatchSelectionChange(batches);
-        })
+        this.setState({selectedBatches: batches});
+        this.props.onBatchSelectionChange(batches);
     }
 }

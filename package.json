@@ -5,6 +5,9 @@
   "main": "index.js",
   "private": true,
   "scripts": {
+    "build": "webpack",
+    "build-release": "webpack -p",
+    "devserver": "webpack-dev-server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -52,5 +55,8 @@
     "webpack": "^2.6.1",
     "webpack-dev-server": "^2.4.5",
     "why-did-you-update": "0.0.8"
+  },
+  "optionalDependencies": {
+    "@types/gulp": "^4.0.4"
   }
 }
