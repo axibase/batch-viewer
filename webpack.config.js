@@ -44,7 +44,7 @@ module.exports = {
     output: {
         filename: "[name].js",
         path: path.resolve(__dirname, "./build"),
-        publicPath: "/"
+        publicPath: "/web/batch/"
     },
     devtool: "source-map",
     resolve: {
@@ -112,7 +112,6 @@ module.exports = {
                 loader: "file-loader",
                 options: {
                     name: "[name].[ext]",
-                    // publicPath: "/assets/",
                     outputPath: "assets/"
                 }
             },
@@ -121,9 +120,10 @@ module.exports = {
     devServer: {
         contentBase: path.resolve(__dirname, "./build"),
         hot: true,
+        host: "192.168.1.147",
         // historyApiFallback: true,
         inline: true,
-        port: 9000
+        port: 8080
     },
     plugins: devPlugins.concat(prodPlugins, [
         new webpack.ProvidePlugin({

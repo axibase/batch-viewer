@@ -7,6 +7,7 @@ export interface Series {
     color: string;
     label: string;
     metric: string;
+    entity: string;
     timeoffset: number;
 }
 

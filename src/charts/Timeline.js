@@ -1124,8 +1124,14 @@ const TextResponsiveQueue = {
         this.queue = [];
         for (let i = 0; i < queue.length; i++) {
             let { textNode, bgNode } = queue[i];
-            let fgWidth = textNode.getBBox().width;
-            let bgWidth = bgNode.getBBox().width;
+            let fgWidth = 1;
+            let bgWidth = 0;
+            try {
+                fgWidth = textNode.getBBox().width;
+                bgWidth = bgNode.getBBox().width;
+            } catch (e) {
+                // Firefox stuff
+            }
 
             if (fgWidth > bgWidth) {
                 toRemove.push(textNode);

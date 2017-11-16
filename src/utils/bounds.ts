@@ -14,5 +14,5 @@ export function bounds(...methods: string[]): ClassDecorator {
                 }
             }
         }
-    }
+    } as any;
 }

@@ -112,6 +112,7 @@ export class MainChart extends React.Component<Props, State> {
                 const label = metrics.length > 1 ? metric.label + ":" : "";
                 const batchId = batch.batchId;
                 series.push({
+                    entity: batch.unit,
                     label: unitId + label + batchId,
                     metric: metric.metric,
                     timeoffset: startTime - batch.startAt,

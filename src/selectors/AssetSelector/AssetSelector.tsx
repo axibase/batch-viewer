@@ -39,6 +39,12 @@ export class AssetSelector extends React.Component<Props, State> {
         };
     }
 
+    public componentWillReceiveProps(nextProps: Props, nextCtx) {
+        if (nextProps.assets !== this.props.assets) {
+            this.setState({sites: getDistinct(nextProps.assets, (unit) => unit.site)})
+        }
+    }
+
     public componentWillMount() {
         if (process.env.NODE_ENV === "production") {
             const savedSites = localStorage.getItem("axi-demo-selected-sites");
