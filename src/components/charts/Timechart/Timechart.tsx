@@ -22,6 +22,10 @@ type Props = TimechartProps;
 export class Timechart extends Component<Props, any> {
     private approxLegendHeight: number;
 
+    private style: React.CSSProperties = {
+        height: "790px",
+    }
+
     constructor(props: Props) {
         super(props);
         this.approxLegendHeight = Math.ceil(props.series.length / 3) * 13 + 10;
@@ -36,7 +40,7 @@ export class Timechart extends Component<Props, any> {
     }
 
     private ResponsiveTimechartPlot = ({ measureRef, contentRect }) => (
-        <div ref={measureRef} className="pt-card pt-elevation-0">
+        <div ref={measureRef} className="pt-card pt-elevation-0" style={this.style}>
             <TimechartPlot
                 width={contentRect.bounds.width  - 48}
                 height={this.approxLegendHeight + 720}

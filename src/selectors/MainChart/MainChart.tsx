@@ -39,9 +39,18 @@ export class MainChart extends React.Component<Props, State> {
     }
 
     public render() {
+        let title = "Timechart";
+        if (this.state.series && this.state.series.startTime) {
+            let start = new Date(this.state.series.startTime);
+            if (start.toISOString) {
+                title += ` (base time: ${start.toISOString()})`;
+            } else {
+                title += ` (base time: ${start})`;
+            }
+        }
         return (
             <Section>
-                <Content title="Timechart" collapsed={this.state.collapsed} onCollapse={this.toggleCollapse}>
+                <Content title={title} collapsed={this.state.collapsed} onCollapse={this.toggleCollapse}>
                     <Timechart
                         {...this.state.series}
                     />
