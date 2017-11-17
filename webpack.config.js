@@ -27,6 +27,7 @@ var devPlugins = Mode.isRelease ? [] : [
     new webpack.HotModuleReplacementPlugin(),
     new webpack.DefinePlugin({
         __debug: "true",
+        __log: "true",
         __release: "false"
     })
 ];
@@ -34,6 +35,7 @@ var devPlugins = Mode.isRelease ? [] : [
 var prodPlugins = Mode.isDebug ? [] : [
     new webpack.DefinePlugin({
         __debug: "false",
+        __log: "true",
         __release: "true"
     }),
     new ExtractTextPlugin("default.css"),
