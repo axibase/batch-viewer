@@ -1,5 +1,3 @@
-import "./polyfills";
-
 import "./main.less";
 
 import React from "react";

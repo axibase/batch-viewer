@@ -4,7 +4,7 @@ import * as  Debug from "../../../debug/index";
 import { initializeWidget } from "../../../charts/Timechart";
 import { TimechartProps } from "./Timechart";
 
-import DEFAULT_CONFIG from "./testconfig.js";
+import DEFAULT_CONFIG from "./widgetConfig.js";
 
 export interface TimechartPlotProps extends TimechartProps {
     height: number;
