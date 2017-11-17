@@ -66,7 +66,7 @@ export class TimechartPlot extends React.Component<TimechartPlotProps, any> {
     }
 
     private drawWidget() {
-        const {
+        let {
             endTime,
             height,
             series,
@@ -83,7 +83,11 @@ export class TimechartPlot extends React.Component<TimechartPlotProps, any> {
         if (!root) { return; }
         root.innerHTML = "";
 
-        if (!series || series.length === 0 || !width || width <= 0) {
+        if (!width || width <= 0) {
+            width = document.querySelector(".batch-timeline-root").getBoundingClientRect().width;
+        }
+
+        if (!series || series.length === 0 /*|| !width || width <= 0*/) {
             return;
         }
 

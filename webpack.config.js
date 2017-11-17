@@ -44,7 +44,7 @@ module.exports = {
     output: {
         filename: "[name].js",
         path: path.resolve(__dirname, "./build"),
-        publicPath: "/web/batch/"
+        publicPath: "/portal/resource/batch/"
     },
     devtool: "source-map",
     resolve: {

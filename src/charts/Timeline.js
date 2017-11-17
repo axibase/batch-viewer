@@ -701,7 +701,7 @@ export class BatchTimeline {
                         }
                     }
                 }
-                let target = plot.querySelector(`.lane[data-unitid=${unit}]`);
+                let target = plot.querySelector(`.lane[data-unitid="${unit}"]`);
                 if (target != null) {
                     target.classList.toggle("lane--hidden");
                 }
