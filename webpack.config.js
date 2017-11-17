@@ -2,6 +2,8 @@ var path = require("path");
 var process = require("process");
 var webpack = require("webpack");
 
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
+
 var Mode;
 
 (function (Mode) {
@@ -25,6 +27,7 @@ var devPlugins = Mode.isRelease ? [] : [
     new webpack.HotModuleReplacementPlugin(),
     new webpack.DefinePlugin({
         __debug: "true",
+        __log: "true",
         __release: "false"
     })
 ];
@@ -32,14 +35,17 @@ var devPlugins = Mode.isRelease ? [] : [
 var prodPlugins = Mode.isDebug ? [] : [
     new webpack.DefinePlugin({
         __debug: "false",
+        __log: "true",
         __release: "true"
     }),
+    new ExtractTextPlugin("default.css"),
 ];
 
 module.exports = {
     entry: {
         "app": "./src/main.tsx",
-        "es6-shim": "es6-shim"
+        "polyfills": "./src/polyfills/index.ts",
+        "index": "./src/index.html",
     },
     output: {
         filename: "[name].js",
@@ -48,7 +54,10 @@ module.exports = {
     },
     devtool: "source-map",
     resolve: {
-        extensions: [".js", ".json", ".ts", ".tsx"]
+        extensions: [".js", ".json", ".ts", ".tsx"],
+    },
+    externals: {
+        "jquery": "jQuery",
     },
     module: {
         rules: [
@@ -75,37 +84,35 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                use: [
-                    {
-                        loader: "style-loader"
-                    },
-                    {
+                use: ExtractTextPlugin.extract({
+                    fallback: "style-loader",
+                    use: {
                         loader: "css-loader",
                         options: {
                             sourceMap: true
                         }
-                    },
-                ]
+                    }
+                })
             },
             {
                 test: /\.less$/,
-                use: [
-                    {
-                        loader: "style-loader"
-                    },
-                    {
-                        loader: "css-loader",
-                        options: {
-                            sourceMap: true
-                        }
-                    },
-                    {
-                        loader: "less-loader",
-                        options: {
-                            sourceMap: true
-                        }
-                    },
-                ]
+                use: ExtractTextPlugin.extract({
+                    fallback: "style-loader",
+                    use: [
+                        {
+                            loader: "css-loader",
+                            options: {
+                                sourceMap: true
+                            }
+                        },
+                        {
+                            loader: "less-loader",
+                            options: {
+                                sourceMap: true
+                            }
+                        },
+                    ]
+                })
             },
             {
                 test: /\.(eot|svg|ttf|TTF|woff|woff2|png)$/,
@@ -115,22 +122,25 @@ module.exports = {
                     outputPath: "assets/"
                 }
             },
+            {
+                test: /\.html$/,
+                loader: "file-loader",
+                options: {
+                    name: "[name].[ext]",
+                    outputPath: "/"
+                }
+            },
         ]
     },
     devServer: {
         contentBase: path.resolve(__dirname, "./build"),
         hot: true,
-        host: "192.168.1.147",
-        // historyApiFallback: true,
         inline: true,
         port: 8080
     },
     plugins: devPlugins.concat(prodPlugins, [
         new webpack.ProvidePlugin({
-            $: "jquery",
             crossfilter: "crossfilter",
-            d3: "d3",
-            jQuery: "jquery"
         }),
     ])
 };

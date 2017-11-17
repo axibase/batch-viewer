@@ -1,7 +1,3 @@
-import "./charts.min";
-
-import "./charts.min.css";
-
 const classNamePrefix = 'widget-';
 
 export function initializeWidget(config, contNode){

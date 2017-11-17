@@ -53,13 +53,22 @@ export class App extends React.Component<{}, AppState> {
     public render() {
         return (
             <div>
-                <AssetSelector
-                    assets={this.state.units}
-                    onAssetSelectionChange={this.onAssetsChange}
-                />
+                {this.assetSelector}
                 {this.batchChart}
                 {this.mainChart}
             </div>
+        );
+    }
+
+    private get assetSelector() {
+        if (!this.state.units || !this.state.units.length) {
+            return;
+        }
+        return (
+            <AssetSelector
+                assets={this.state.units}
+                onAssetSelectionChange={this.onAssetsChange}
+            />
         );
     }
 

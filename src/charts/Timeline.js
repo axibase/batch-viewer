@@ -14,8 +14,6 @@ function includes(array, item, from = 0) {
 
 import "bootstrap";
 import "bootstrap-slider";
-import "./portal_init";
-import "./charts.min";
 
 import "./Timeline.less";
 

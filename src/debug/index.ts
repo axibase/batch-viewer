@@ -1,7 +1,7 @@
 // tslint:disable:no-console
 // tslint:disable-next-line:no-namespace
 export function info(msg?: any, ...args: any[]) {
-    if (__debug) {
+    if (__debug || __log) {
         console.log("[INFO]  " + msg, ...args);
     }
 }
@@ -9,7 +9,7 @@ export function info(msg?: any, ...args: any[]) {
 export function table(data: any[]);
 export function table(header: string, data: any[]);
 export function table(header: string | any[], data?: any) {
-    if (__debug) {
+    if (__debug || __log) {
         if (typeof header !== "string") {
             data = header;
             header = "";
@@ -29,7 +29,7 @@ export function table(header: string | any[], data?: any) {
 }
 
 export function error(msg?: any, ...args: any[]) {
-    if (__debug) {
+    if (__debug || __log) {
         console.error("[ERROR]  " + msg, ...args);
     }
 }

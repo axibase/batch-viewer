@@ -56,8 +56,12 @@ export class AssetSelector extends React.Component<Props, State> {
             const selectedSites = savedSites ? savedSites.split(",") : [];
             const selectedBuildings = savedBuildings ? savedBuildings.split(",") : [];
 
-            this.filterSites(selectedSites);
-            this.filterBuildings(selectedBuildings);
+            if (selectedSites.length === 0) {
+                this.filterSites(selectedSites);
+                this.filterBuildings(selectedBuildings);
+            } else {
+                this.doInitialFilter(selectedSites, selectedBuildings);
+            }
         }
     }
 
@@ -148,6 +152,31 @@ export class AssetSelector extends React.Component<Props, State> {
         });
 
         Debug.table("Top Level :: Selected buildings", buildings);
+    }
+
+    private doInitialFilter(cachedSites: string[], cachedBuildings: string[]) {
+        const assets = this.props.assets;
+        const sites = this.state.sites;
+        const selectedSites = cachedSites.filter((s) => sites.includes(s));
+
+        const unitsBySite = filterAssets(assets, selectedSites);
+        const visibleBuildings = getDistinct(unitsBySite, (unit) => unit.building);
+        const selectedBuildings = cachedBuildings.filter((b) => visibleBuildings.includes(b));
+
+        const visibleAssets = filterAssets(assets, selectedSites, selectedBuildings);
+
+        this.handleSelectionChange([]);
+
+        this.setState({
+            selectedAssets: [],
+            selectedBuildings,
+            selectedSites,
+            visibleAssets,
+            visibleBuildings,
+        });
+
+        Debug.table("Top Level :: Selected sites restored", selectedSites);
+        Debug.table("Top Level :: Selected buildings restored", selectedBuildings);
     }
 
     private handleSelectionChange(units: Asset[]) {

@@ -36,3 +36,4 @@ declare module "*.json" {
 // Define plugin substitutions
 declare const __debug: boolean;
 declare const __release: boolean;
+declare const __log: boolean;
