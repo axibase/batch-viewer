@@ -32,7 +32,7 @@ The final directory structure should look as follows:
 
 Open **Data > Data Entry** page.
 
-<!--screenshot with text area ending with last commands in assets.txt -->
+![](images/data-insert.png)
 
 Copy contents of the below files one by one into the Commands area and click Send.
 
@@ -44,19 +44,19 @@ Copy contents of the below files one by one into the Commands area and click Sen
 
 Verify that the Entities tab contains 10 entities `axi.asset-*`.
 
-<!--screenshot-->
+![](images/asset-entities.png)
 
 Verify that the Metric tab contains metrics `axi.temperature` and `axi.pressure`.
 
-<!--screenshot-->
+![](images/axi-metrics.png)
 
 ## Open Viewer
 
 Verify that the batch viewer page is accessible at `https://atsd_host:8443/portal/resource/batch/index.html`.
 
-It should display a set of sites and buildings in the top controls.
+It should display a set of sites in the top controls.
 
-<!--screenshot-->
+![](images/first-run.png)
 
 ## Introduction
 
