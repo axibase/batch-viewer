@@ -18,7 +18,7 @@
 2. Open ATSD Web interface in your browser.
 3. Go to Data -> Data Entry (`<atsd_host>/metrics/entry`).
 4. Make sure that Command insertion mode is active.
-5. Copy the content of `batch-viewer-master/sample-data/data-1.txt` .to **Commands** field and click `Send`.
+5. Copy the content of `batch-viewer-master/sample-data/data-1.txt` to **Commands** field and click `Send`.
 6. Repeat step 5 for `data-2.txt` and `data-3.txt`.
 7. Go to Entities page and make sure you have 10 new entities `axi.asset-*`.
 
