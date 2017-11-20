@@ -34,7 +34,7 @@ The final directory structure should look as follows:
 /opt
   /atsd
     /atsd
-      /conf/
+      /conf
         /portal
           /batch
             index.html
@@ -76,29 +76,31 @@ The viewer should display two sites in the top menu.
 
 1. Select sites `nur` and `svl` and then select buildings `B` and `C` from top-left control panel.
 
-![](images/site-select.png)
+  ![](images/site-select.png)
 
-Use `Ctrl + Click` or `⌘ + Click` to choose multiple sites and buildings.
+  Use `Ctrl + Click` or `⌘ + Click` to choose multiple sites and buildings.
 
 2. Once you have some buildings selected, you can view a list of equipments (assets) in the top-right panel. Select `axi.asset-3` and `axi.asset-7`.
 
-![](images/assets.png)
+  ![](images/assets.png)
 
-Use `Ctrl + Click` or `⌘ + Click` to select multiple assets.
+  Use `Ctrl + Click` or `⌘ + Click` to select multiple assets.
 
 3. Scroll down the page. You will see a scrollable and zoomable timeline containing manufacturing batches for the selected assets. 
 
-Batch is an interval of time when the equipment was executing an assigned manufaturing task. Each batch is composed of one or multiple procedures, executed sequentially. Batches are represented as rectangles, divided into blue and orange segments for every procedure of the batch. Idle time between batches and between procedures is colored with the grey color.
+  Batch is an interval of time when the equipment was executing an assigned manufacturing task. Each batch is composed of one or multiple procedures, executed sequentially. Batches are represented as rectangles, divided into blue and orange segments for every procedure of the batch. Idle time between procedures is colored with the grey color.
 
-The `Assets` selector controls which assets should be shown on the timeline. The `Procedures` selector toggles the visibilty of procedure of the same type. 
+* The `Assets` control contains assets displayed on the timeline. 
 
-The `Batch Duration` slider filters batches that completed within the specified time range. 
+* The `Procedures` selector toggles the visibilty of procedures of the same type. 
 
-The Batch Search field finds batches which name contains the specified text. The match is case-insensitive and supports `'*'` as the wildcard character.
+* The `Batch Duration` slider filters batches that completed within the specified time range. 
 
-![](images/timeline-overview.png)
+* The `Batch Search` field finds batches which name contains the specified text. The match is case-insensitive and supports `'*'` as the wildcard character.
+
+  ![](images/timeline-overview.png)
 
 4. Click on batches `1440` and `1487` on the timeline and scroll down the page. You will see a time chart consisting of metrics for the selected assets for the interval of time to fit selected batches. Metrics for multiple batches are re-based to a start date in order to illustrate metric values relative to batch start time.
 
-![](images/timechart.png)
+  ![](images/timechart.png)
 
