@@ -12,14 +12,14 @@ if (!Array.prototype.includes) {
             throw new TypeError('"this" is null or not defined');
         }
 
-        var o = Object(this);
+        let o = Object(this);
         // tslint:disable-next-line:no-bitwise
-        var len = o.length >>> 0;
+        let len = o.length >>> 0;
         if (len === 0) {
             return false;
         }
-        var n = fromIndex | 0;
-        var k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
+        let n = fromIndex | 0;
+        let k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
         function sameValueZero(x, y) {
             return x === y || (typeof x === "number" && typeof y === "number" && isNaN(x) && isNaN(y));
         }

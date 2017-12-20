@@ -13,13 +13,9 @@ export interface SelectionProps {
     readonly?: boolean;
 }
 
-export interface SelectionState {
-}
-
 type Props = SelectionProps;
-type State = SelectionState;
 
-export class Selection extends Component<Props, State> {
+export class Selection extends Component<Props> {
     private root: HTMLElement;
 
     public render() {

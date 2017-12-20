@@ -4,8 +4,6 @@ import {Option} from "./SelectionOption";
 
 import "./InterpolationSelection.less";
 
-
-
 export interface SelectionProps {
     options: Option[];
     value: any;
@@ -13,17 +11,13 @@ export interface SelectionProps {
     readonly?: boolean;
 }
 
-export interface SelectionState {
-}
-
 type Props = SelectionProps;
-type State = SelectionState;
 
-export class InterpolationIntervalSelection extends Component<Props, State> {
+export class InterpolationIntervalSelection extends Component<Props> {
 
     public render() {
         return (
-            <div className="axi-select-dropdown">
+            <div className="axi-select-dropdown" id="InterpolationIntervalSelection">
                 {this.hasOptions ? this.selectionOptions : <NothingSelected/>}
             </div>
         )

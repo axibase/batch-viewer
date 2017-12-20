@@ -9,136 +9,136 @@ export interface InterpolationInterval {
 
 export const interpolationIntervals: InterpolationInterval[] = [
     {
-        label: '5 seconds',
+        label: "5 seconds",
         period: {
             count: 5,
-            unit: 'SECOND',
+            unit: "SECOND",
         },
     },
     {
-        label: '10 seconds',
+        label: "10 seconds",
         period: {
             count: 10,
-            unit: 'SECOND',
+            unit: "SECOND",
         },
     },
     {
-        label: '15 seconds',
+        label: "15 seconds",
         period: {
             count: 15,
-            unit: 'SECOND',
+            unit: "SECOND",
         },
     },
     {
-        label: '20 seconds',
+        label: "20 seconds",
         period: {
             count: 20,
-            unit: 'SECOND',
+            unit: "SECOND",
         },
     },
     {
-        label: '30 seconds',
+        label: "30 seconds",
         period: {
             count: 30,
-            unit: 'SECOND',
+            unit: "SECOND",
         },
     },
     {
-        label: '1 minute',
+        label: "1 minute",
         period: {
             count: 1,
-            unit: 'MINUTE',
+            unit: "MINUTE",
         },
     },
     {
-        label: '2 minutes',
+        label: "2 minutes",
         period: {
             count: 2,
-            unit: 'MINUTE',
+            unit: "MINUTE",
         },
     },
     {
-        label: '3 minutes',
+        label: "3 minutes",
         period: {
             count: 3,
-            unit: 'MINUTE',
+            unit: "MINUTE",
         },
     },
     {
-        label: '5 minutes',
+        label: "5 minutes",
         period: {
             count: 5,
-            unit: 'MINUTE',
+            unit: "MINUTE",
         },
     },
     {
-        label: '10 minutes',
+        label: "10 minutes",
         period: {
             count: 10,
-            unit: 'MINUTE',
+            unit: "MINUTE",
         },
     },
     {
-        label: '15 minutes',
+        label: "15 minutes",
         period: {
             count: 15,
-            unit: 'MINUTE',
+            unit: "MINUTE",
         },
     },
     {
-        label: '30 minutes',
+        label: "30 minutes",
         period: {
             count: 30,
-            unit: 'MINUTE',
+            unit: "MINUTE",
         },
     },
     {
-        label: '1 hour',
+        label: "1 hour",
         period: {
             count: 1,
-            unit: 'HOUR',
+            unit: "HOUR",
         },
     },
     {
-        label: '2 hours',
+        label: "2 hours",
         period: {
             count: 2,
-            unit: 'HOUR',
+            unit: "HOUR",
         },
     },
     {
-        label: '3 hours',
+        label: "3 hours",
         period: {
             count: 3,
-            unit: 'HOUR',
+            unit: "HOUR",
         },
     },
     {
-        label: '6 hours',
+        label: "6 hours",
         period: {
             count: 6,
-            unit: 'HOUR',
+            unit: "HOUR",
         },
     },
     {
-        label: '8 hours',
+        label: "8 hours",
         period: {
             count: 8,
-            unit: 'HOUR',
+            unit: "HOUR",
         },
     },
     {
-        label: '12 hours',
+        label: "12 hours",
         period: {
             count: 12,
-            unit: 'HOUR',
+            unit: "HOUR",
         },
     },
     {
-        label: '1 day',
+        label: "1 day",
         period: {
             count: 1,
-            unit: 'DAY',
+            unit: "DAY",
         },
     },
 ];

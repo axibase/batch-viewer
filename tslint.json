@@ -1,4 +1,5 @@
 {
+	"exclude": ["*.js"],
 	"defaultSeverity": "warning",
 	"extends": [ "tslint:recommended", "tslint-react" ],
 	"rules": {

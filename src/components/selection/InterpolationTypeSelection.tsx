@@ -10,14 +10,17 @@ export interface SelectionProps {
     readonly?: boolean;
 }
 
-export interface SelectionState {
-}
-
 type Props = SelectionProps;
-type State = SelectionState;
 
+export class InterpolationTypeSelection extends Component<Props> {
 
-export class InterpolationTypeSelection extends Component<Props, State> {
+    public render() {
+        return (
+            <div className="fieldset" id="InterpolationTypeSelection">
+                {this.selectionOptions}
+            </div>
+        );
+    }
 
     private onChange = (evt) => {
         const {options, onChange, readonly} = this.props;
@@ -26,18 +29,10 @@ export class InterpolationTypeSelection extends Component<Props, State> {
         }
     };
 
-    public render() {
-        return (
-            <div className="fieldset">
-                {this.selectionOptions}
-            </div>
-        );
-    }
-
     private get selectionOptions(): JSX.Element {
         const options = this.props.options.map((option: Option) => (
                 <label>
-                    <input type="radio" value={option.id} id={option.id} checked={this.props.value === option.id}
+                    <input type="radio" name="radioInterpolationType" value={option.id} defaultChecked={this.props.value === option.id}
                            onChange={this.onChange}/>
                     {option.value}
                 </label>
@@ -50,4 +45,3 @@ export class InterpolationTypeSelection extends Component<Props, State> {
     }
 
 }
-

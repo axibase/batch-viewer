@@ -1,13 +1,12 @@
 import React from "react";
 import {reduceMax, reduceMin} from "../../utils";
 
+import {InterpolationInterval} from "../../components/app/interpolationIntervals";
 import {Timechart} from "../../components/charts";
 import {Aside, Content, Section} from "../../components/section";
-import {Option, Selection,} from "../../components/selection";
+import {Option, Selection, } from "../../components/selection";
 import {InterpolationIntervalSelection} from "../../components/selection/InterpolationIntervalSelection";
-import {InterpolationInterval} from "../../components/app/interpolationIntervals";
 import {InterpolationTypeSelection} from "../../components/selection/InterpolationTypeSelection";
-
 
 export interface MainChartState {
     selectedLabels: string[];
@@ -37,21 +36,21 @@ export class MainChart extends React.Component<Props, State> {
         super(props);
         this.state = {
             collapsed: false,
-            labelOptions: this.createLabelOptions(props.labels),
-            selectedLabels: props.labels,
             interpolateEnabled: false,
-            interpolationTypeOptions: this.createInterpolationOptions(props.interpolationTypes),
-            selectedInterpolationType: props.interpolationTypes[0],
             interpolationIntervalOptions: this.createInterpolationIntervalOptions(props.interpolationIntervals),
+            interpolationTypeOptions: this.createInterpolationOptions(props.interpolationTypes),
+            deferredSeries: void 0,
+            labelOptions: this.createLabelOptions(props.labels),
             selectedInterpolationInterval: props.interpolationIntervals[5],
+            selectedInterpolationType: props.interpolationTypes[0],
+            selectedLabels: props.labels,
             series: this.createSeries({
                 batches: props.batches,
                 labels: props.labels,
                 interpolateEnabled: false,
                 interpolationInterval: props.interpolationIntervals[5],
-                interpolationType: props.interpolationTypes[0]
+                interpolationType: props.interpolationTypes[0],
             }),
-            deferredSeries: void 0,
         };
 
         this.onMetricsChange = this.onMetricsChange.bind(this);
@@ -63,7 +62,7 @@ export class MainChart extends React.Component<Props, State> {
     public render() {
         let title = "Timechart";
         if (this.state.series && this.state.series.startTime) {
-            let start = new Date(this.state.series.startTime);
+            const start = new Date(this.state.series.startTime);
             if (start.toISOString) {
                 title += ` (base time: ${start.toISOString()})`;
             } else {
@@ -82,15 +81,14 @@ export class MainChart extends React.Component<Props, State> {
                                                 onChange={this.onInterpolateChange}/>
                     </label>
                     <div hidden={!this.state.interpolateEnabled}>
-                        <label className="label-interp-type">Function </label>
+                        <label className="label-interp-type" htmlFor="InterpolationTypeSelection">Function </label>
 
                         <InterpolationTypeSelection
                             options={this.state.interpolationTypeOptions}
                             onChange={this.onInterpolateTypeChange}
                             value={this.state.selectedInterpolationType}
                         />
-                        <div></div>
-                        <label>Period</label>
+                        <label htmlFor="InterpolationIntervalSelection">Period</label>
                         <InterpolationIntervalSelection
                             options={this.state.interpolationIntervalOptions}
                             onChange={this.onInterpolateIntervalChange}
@@ -119,8 +117,8 @@ export class MainChart extends React.Component<Props, State> {
     private onInterpolateChange = (e) => {
         const interpolateEnabled = e.target.checked;
         this.setState({
-            interpolateEnabled: interpolateEnabled,
-            series: this.createSeries({interpolateEnabled: interpolateEnabled})
+            interpolateEnabled,
+            series: this.createSeries({interpolateEnabled}),
         });
     };
 
@@ -146,7 +144,7 @@ export class MainChart extends React.Component<Props, State> {
         const interpolation = options.map((option) => option.data)[0];
         this.setState((state, props) => ({
             selectedInterpolationInterval: interpolation,
-            series: this.createSeries({interpolationInterval: interpolation})
+            series: this.createSeries({interpolationInterval: interpolation}),
         }));
     }
 
@@ -154,7 +152,7 @@ export class MainChart extends React.Component<Props, State> {
         const interpolation = options.map((option) => option.data)[0];
         this.setState((state, props) => ({
             selectedInterpolationType: interpolation,
-            series: this.createSeries({interpolationType: interpolation})
+            series: this.createSeries({interpolationType: interpolation}),
         }));
     }
 
@@ -211,7 +209,7 @@ export class MainChart extends React.Component<Props, State> {
                 const unitId = assets.length > 1 ? batch.unit + ":" : "";
                 const label = labels.length > 1 ? l + ":" : "";
                 const batchId = batch.batchId;
-                batch.metrics.forEach(metric => {
+                batch.metrics.forEach((metric) => {
                     if (l === metric.label) {
                         let s = {
                             entity: batch.unit,
@@ -229,7 +227,7 @@ export class MainChart extends React.Component<Props, State> {
                                     timezone: "UTC",
                                 },
                                 boundary: "INNER",
-                                fill: "true"
+                                fill: "true",
 
                             };
                         }

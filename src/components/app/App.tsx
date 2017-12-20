@@ -18,12 +18,11 @@ interface AppState {
 
 type State = AppState;
 
-
 export class App extends React.Component<{}, AppState> {
 
-    private labels: string[] = ['Agitator Speed', 'Jacket Temperature', 'Product Temperature'];
+    private labels: string[] = ["Agitator Speed", "Jacket Temperature", "Product Temperature"];
     private interpolationIntervals: InterpolationInterval[] = interpolationIntervals;
-    private interpolationTypes: string[] = ['AUTO', 'LINEAR', 'PREVIOUS'];
+    private interpolationTypes: string[] = ["AUTO", "LINEAR", "PREVIOUS"];
 
     constructor(props) {
         super(props);
@@ -39,10 +38,10 @@ export class App extends React.Component<{}, AppState> {
 
     public componentDidMount() {
         this.loadAtsdEntities((entities) => {
-            let assets = entities.map(getAssetFromEntity);
+            const assets = entities.map(getAssetFromEntity);
             this.loadBatches(assets, (batches) => {
                 this.loadBatchesMetricsByLabels(entities, (metrics) => {
-                    for (let batch of batches) {
+                    for (const batch of batches) {
                         batch.metrics = metrics[batch.unit];
                     }
                 });
@@ -145,11 +144,11 @@ export class App extends React.Component<{}, AppState> {
         };
         if (Array.isArray(entity)) {
             xhr.send(JSON.stringify({
-                entities: entity, metric, interval: {count: 1, unit: "YEAR"},
+                entities: entity, interval: {count: 1, unit: "YEAR"}, metric,
             }));
         } else {
             xhr.send(JSON.stringify({
-                entity, metric, interval: {count: 1, unit: "YEAR"},
+                entity, interval: {count: 1, unit: "YEAR"}, metric,
             }));
         }
     }
@@ -170,10 +169,10 @@ export class App extends React.Component<{}, AppState> {
 
     private loadEntityMetricsByLabels(entity: string, callback: (respData: any) => void) {
         const xhr = new XMLHttpRequest();
-        const expr = this.labels.map(l => "label = '" + l + "'").join(' or ');
+        const expr = this.labels.map((l) => "label = '" + l + "'").join(" or ");
         xhr.open("GET", url`/api/v1/entities/${entity}/metrics?expression=${expr}`, true);
         xhr.onload = () => {
-            const metrics = JSON.parse(xhr.responseText).map(function (metric) {
+            const metrics = JSON.parse(xhr.responseText).map((metric) => {
                 return {label: metric.label, name: metric.name, interpolate: metric.interpolate}
             });
             callback(metrics);
@@ -192,9 +191,9 @@ export class App extends React.Component<{}, AppState> {
         xhr.onload = () => {
             let metrics = [];
             // const respData = JSON.parse(xhr.responseText);
-            const respData = JSON.parse(xhr.responseText).map(metric => metric.name);
-            metrics = metrics.concat(respData.filter(metric => metric.endsWith(':unit_batchid')),
-                                     respData.filter(metric => metric.endsWith(':unit_procedure')));
+            const respData = JSON.parse(xhr.responseText).map((metric) => metric.name);
+            metrics = metrics.concat(respData.filter((metric) => metric.endsWith(":unit_batchid")),
+                respData.filter((metric) => metric.endsWith(":unit_procedure")));
             callback(metrics);
         };
         xhr.onabort = xhr.onerror = xhr.ontimeout = () => {
@@ -205,11 +204,11 @@ export class App extends React.Component<{}, AppState> {
     }
 
     private loadBatchesMetricsByLabels(entities: any[], callback: (respData: any) => void) {
-        let batchMetrics = {};
+        const batchMetrics = {};
         let reqCounter = entities.length;
 
-        for (let entity of entities) {
-            let name = entity.name;
+        for (const entity of entities) {
+            const name = entity.name;
             this.loadEntityMetricsByLabels(name, (metrics) => {
                 batchMetrics[name] = metrics;
                 if (--reqCounter === 0 || metrics === []) {
@@ -222,17 +221,17 @@ export class App extends React.Component<{}, AppState> {
 
     private loadBatches(assets: Asset[], callback: (batches: Batch[]) => void) {
         let batchList = [];
-        const entities = assets.map(a => a.unitId);
+        const entities = assets.map((a) => a.unitId);
         let reqCounter = entities.length;
-        for (let entity of entities) {
+        for (const entity of entities) {
             this.loadMetricsByExpression(entity, (metrics) => {
                 // Load batch Info
                 if (metrics.length === 2) {
-                    let batchId = metrics[0];
-                    let procedure = metrics[1];
+                    const batchId = metrics[0];
+                    const procedure = metrics[1];
                     this.loadAtsdSeries(entity, batchId, (batchesResponse) => {
                         this.loadAtsdSeries(entity, procedure, (assetResponse) => {
-                            let batches = this.joinBatchesAndProcedures(assets, batchesResponse, assetResponse);
+                            const batches = this.joinBatchesAndProcedures(assets, batchesResponse, assetResponse);
                             batchList = batchList.concat(batches);
                             if (--reqCounter === 0 || batchesResponse === [] || assetResponse === []) {
                                 callback(batchList)
@@ -240,38 +239,36 @@ export class App extends React.Component<{}, AppState> {
                         });
                     });
 
-                }
-                else {
+                } else {
                     --reqCounter;
-                    Debug.info('No batch info for asset:', entity);
+                    Debug.info("No batch info for asset:", entity);
                 }
 
             });
         }
     }
 
-
     private joinBatchesAndProcedures(assets: Asset[], batchResponse: any[], procedureResponse: any[]) {
-        let map = new Map();
-        for (let asset of assets) {
+        const map = new Map();
+        for (const asset of assets) {
             map.set(asset.unitId, {
                 asset,
                 batches: [],
                 procedures: [],
             })
         }
-        for (let group of batchResponse) {
-            let join = map.get(group.entity);
+        for (const group of batchResponse) {
+            const join = map.get(group.entity);
             join.batches = getBatchConfigurations(join.asset, group.data);
         }
 
-        for (let group of procedureResponse) {
-            let join = map.get(group.entity);
+        for (const group of procedureResponse) {
+            const join = map.get(group.entity);
             join.procedures = group.data;
         }
         let result = [];
         map.forEach((v) => {
-            let batches = v.batches;
+            const batches = v.batches;
             populateProcedures(batches, v.procedures);
             result = result.concat(batches);
         });

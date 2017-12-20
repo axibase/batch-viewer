@@ -2,15 +2,15 @@ import React from "react";
 import "./InterpolationSelection.less";
 
 export class CheckBoxPanel extends React.Component<any, any> {
-    state = {
+    public state = {
         checked: false,
     };
 
-    onChange = (e) => {
+    public onChange = (e) => {
         this.setState({checked: e.target.checked});
     };
 
-    render() {
+    public render() {
         return (
             <div>
                 <input type="checkbox" onChange={this.onChange} />

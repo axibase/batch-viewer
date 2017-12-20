@@ -2,12 +2,12 @@ export function getAssetFromEntity(entity: any): Asset {
     return {
         unitId: entity.name,
         site: entity.tags.site,
-        building: entity.tags.building
+        building: entity.tags.building,
     };
 }
 
 export function getAvailableSites(assets) {
-    let result = new Set();
+    const result = new Set();
     for (const {site} of assets) {
         result.add(site);
     }
@@ -15,7 +15,7 @@ export function getAvailableSites(assets) {
 }
 
 export function getAvailableBuildings(assets) {
-    let result = new Set();
+    const result = new Set();
     for (const {building} of assets) {
         result.add(building);
     }
@@ -37,7 +37,7 @@ function getMilliseconds(t: number | undefined, d: string | undefined) {
 }
 
 export function getBatchConfigurations(asset: Asset, seriesData: DataSample[]) {
-    let batches: Batch[] = [];
+    const batches: Batch[] = [];
     let activeBatch = {unit: asset.unitId} as Batch;
     for (const {t, d, x} of seriesData) {
         if (x === "Inactive") {
