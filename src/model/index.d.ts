@@ -10,6 +10,7 @@ declare interface Batch {
     startAt: number;
     endAt: number;
     procedures: Procedure[];
+    metrics: Metric[];
 }
 
 declare interface Procedure {
@@ -19,6 +20,7 @@ declare interface Procedure {
 }
 
 declare interface Metric {
-    metric: string;
+    name: string;
     label: string;
+    interpolate: string;
 }

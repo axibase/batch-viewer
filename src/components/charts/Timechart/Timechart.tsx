@@ -9,6 +9,18 @@ export interface Series {
     metric: string;
     entity: string;
     timeoffset: number;
+    interpolate?: {
+        function: string,
+        period: {
+            count: string,
+            unit: string,
+            align: string,
+            timezone: string,
+            boundary: string,
+            fill: string
+        }
+    },
+    stepline: boolean
 }
 
 export interface TimechartProps {
@@ -24,7 +36,7 @@ export class Timechart extends Component<Props, any> {
 
     private style: React.CSSProperties = {
         height: "790px",
-    }
+    };
 
     constructor(props: Props) {
         super(props);

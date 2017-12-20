@@ -49,10 +49,6 @@ export function getBatchConfigurations(asset: Asset, seriesData: DataSample[]) {
             activeBatch.batchId = x;
         }
     }
-    // if (activeBatch.startAt) {
-    //     // Last incomplete batch
-    //     batches.push(activeBatch);
-    // }
     return batches;
 }
 
@@ -78,9 +74,6 @@ export function populateProcedures(batches: Batch[], seriesData: DataSample[]) {
             currentProcedure = {name: x, at: getMilliseconds(t, d)} as Procedure;
         }
     }
-    // if (currentProcedure.name) {
-    //     buffer.push(currentProcedure)
-    // }
     if (buffer.length) {
         // Last incomplete batch
         activeBatch.procedures = buffer;
