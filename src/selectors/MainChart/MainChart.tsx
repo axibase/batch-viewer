@@ -5,12 +5,13 @@ import {Timechart} from "../../components/charts";
 import {Aside, Content, Section} from "../../components/section";
 import {Option, Selection,} from "../../components/selection";
 import {InterpolationIntervalSelection} from "../../components/selection/InterpolationIntervalSelection";
+import {InterpolationInterval} from "../../components/app/interpolationIntervals";
 import {InterpolationTypeSelection} from "../../components/selection/InterpolationTypeSelection";
 
 
 export interface MainChartState {
     selectedLabels: string[];
-    selectedInterpolationInterval: any;
+    selectedInterpolationInterval: InterpolationInterval;
     selectedInterpolationType: string;
     labelOptions: Option[];
     interpolationIntervalOptions: Option[];
@@ -24,8 +25,8 @@ export interface MainChartState {
 export interface MainChartProps {
     labels: string[];
     batches: Batch[];
-    interpolationIntervals: any[];
     interpolationTypes: string[];
+    interpolationIntervals: InterpolationInterval[];
 }
 
 type Props = MainChartProps;
@@ -35,15 +36,21 @@ export class MainChart extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            labelOptions: this.createLabelOptions(props.labels),
-            interpolationIntervalOptions: this.createInterpolationIntervalOptions(props.interpolationIntervals),
-            interpolationTypeOptions: this.createInterpolationOptions(props.interpolationTypes),
-            selectedLabels: props.labels,
-            selectedInterpolationInterval: props.interpolationIntervals[5],
-            selectedInterpolationType: props.interpolationTypes[0],
             collapsed: false,
+            labelOptions: this.createLabelOptions(props.labels),
+            selectedLabels: props.labels,
             interpolateEnabled: false,
-            series: this.createSeries(props.batches, props.labels, false, props.interpolationIntervals[0], props.interpolationTypes[0]),
+            interpolationTypeOptions: this.createInterpolationOptions(props.interpolationTypes),
+            selectedInterpolationType: props.interpolationTypes[0],
+            interpolationIntervalOptions: this.createInterpolationIntervalOptions(props.interpolationIntervals),
+            selectedInterpolationInterval: props.interpolationIntervals[5],
+            series: this.createSeries({
+                batches: props.batches,
+                labels: props.labels,
+                interpolateEnabled: false,
+                interpolationInterval: props.interpolationIntervals[5],
+                interpolationType: props.interpolationTypes[0]
+            }),
             deferredSeries: void 0,
         };
 
@@ -113,7 +120,7 @@ export class MainChart extends React.Component<Props, State> {
         const interpolateEnabled = e.target.checked;
         this.setState({
             interpolateEnabled: interpolateEnabled,
-            series: this.createSeries(undefined, undefined, interpolateEnabled)
+            series: this.createSeries({interpolateEnabled: interpolateEnabled})
         });
     };
 
@@ -131,23 +138,23 @@ export class MainChart extends React.Component<Props, State> {
         const metrics = options.map((option) => option.data);
         this.setState((state, props) => ({
             selectedLabels: metrics,
-            series: this.createSeries(props.batches, metrics),
+            series: this.createSeries({batches: props.batches, labels: metrics}),
         }));
     }
 
     private onInterpolateIntervalChange(options: Option[]) {
         const interpolation = options.map((option) => option.data)[0];
-        this.setState(() => ({
+        this.setState((state, props) => ({
             selectedInterpolationInterval: interpolation,
-            series: this.createSeries(undefined, undefined, undefined, interpolation)
+            series: this.createSeries({interpolationInterval: interpolation})
         }));
     }
 
     private onInterpolateTypeChange(options: Option[]) {
         const interpolation = options.map((option) => option.data)[0];
-        this.setState(() => ({
+        this.setState((state, props) => ({
             selectedInterpolationType: interpolation,
-            series: this.createSeries(undefined, undefined, undefined, undefined, interpolation)
+            series: this.createSeries({interpolationType: interpolation})
         }));
     }
 
@@ -177,7 +184,15 @@ export class MainChart extends React.Component<Props, State> {
         }));
     }
 
-    private createSeries(batches = this.props.batches, labels = this.state.selectedLabels, interpolateEnabled = this.state.interpolateEnabled, interpolationInterval = this.state.selectedInterpolationInterval, interpolationType = this.state.selectedInterpolationType) {
+    private createSeries({batches, labels, interpolateEnabled, interpolationInterval, interpolationType}: any) {
+        batches = batches || this.props.batches;
+        labels = labels || this.state.selectedLabels;
+        if (interpolateEnabled === undefined) {
+            interpolateEnabled = this.state.interpolateEnabled
+        }
+        interpolationInterval = interpolationInterval || this.state.selectedInterpolationInterval;
+        interpolationType = interpolationType || this.state.selectedInterpolationType;
+
         if (batches.length === 0 || labels.length === 0) {
             return {
                 endTime: 0,
@@ -187,8 +202,8 @@ export class MainChart extends React.Component<Props, State> {
         }
         const assets = dedupe(batches.map((batch) => batch.unit));
 
-        const startTime = reduceMin(batches, (batch) => batch.startAt);
-        const range = reduceMax(batches, (batch) => batch.endAt - batch.startAt);
+        const startTime = reduceMin(batches as Batch[], (batch) => batch.startAt);
+        const range = reduceMax(batches as Batch[], (batch) => batch.endAt - batch.startAt);
         const endTime = startTime + range;
         const series = [];
         for (const l of labels) {

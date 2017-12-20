@@ -3,6 +3,7 @@ import * as Debug from "../../debug";
 
 import {AssetSelector, BatchChartSelector, MainChart} from "../../selectors";
 import {getAssetFromEntity, getBatchConfigurations, populateProcedures} from "../../utils/series";
+import {InterpolationInterval, interpolationIntervals} from "./interpolationIntervals"
 
 import "./App.less";
 
@@ -21,141 +22,7 @@ type State = AppState;
 export class App extends React.Component<{}, AppState> {
 
     private labels: string[] = ['Agitator Speed', 'Jacket Temperature', 'Product Temperature'];
-    private interpolationIntervals = [
-        {
-            label: '5 seconds',
-            period: {
-                count: 5,
-                unit: 'SECOND',
-            },
-        },
-        {
-            label: '10 seconds',
-            period: {
-                count: 10,
-                unit: 'SECOND',
-            },
-        },
-        {
-            label: '15 seconds',
-            period: {
-                count: 15,
-                unit: 'SECOND',
-            },
-        },
-        {
-            label: '20 seconds',
-            period: {
-                count: 20,
-                unit: 'SECOND',
-            },
-        },
-        {
-            label: '30 seconds',
-            period: {
-                count: 30,
-                unit: 'SECOND',
-            },
-        },
-        {
-            label: '1 minute',
-            period: {
-                count: 1,
-                unit: 'MINUTE',
-            },
-        },
-        {
-            label: '2 minutes',
-            period: {
-                count: 2,
-                unit: 'MINUTE',
-            },
-        },
-        {
-            label: '3 minutes',
-            period: {
-                count: 3,
-                unit: 'MINUTE',
-            },
-        },
-        {
-            label: '5 minutes',
-            period: {
-                count: 5,
-                unit: 'MINUTE',
-            },
-        },
-        {
-            label: '10 minutes',
-            period: {
-                count: 10,
-                unit: 'MINUTE',
-            },
-        },
-        {
-            label: '15 minutes',
-            period: {
-                count: 15,
-                unit: 'MINUTE',
-            },
-        },
-        {
-            label: '30 minutes',
-            period: {
-                count: 30,
-                unit: 'MINUTE',
-            },
-        },
-        {
-            label: '1 hour',
-            period: {
-                count: 1,
-                unit: 'HOUR',
-            },
-        },
-        {
-            label: '2 hours',
-            period: {
-                count: 2,
-                unit: 'HOUR',
-            },
-        },
-        {
-            label: '3 hours',
-            period: {
-                count: 3,
-                unit: 'HOUR',
-            },
-        },
-        {
-            label: '6 hours',
-            period: {
-                count: 6,
-                unit: 'HOUR',
-            },
-        },
-        {
-            label: '8 hours',
-            period: {
-                count: 8,
-                unit: 'HOUR',
-            },
-        },
-        {
-            label: '12 hours',
-            period: {
-                count: 12,
-                unit: 'HOUR',
-            },
-        },
-        {
-            label: '1 day',
-            period: {
-                count: 1,
-                unit: 'DAY',
-            },
-        },
-    ];
+    private interpolationIntervals: InterpolationInterval[] = interpolationIntervals;
     private interpolationTypes: string[] = ['AUTO', 'LINEAR', 'PREVIOUS'];
 
     constructor(props) {
@@ -326,12 +193,12 @@ export class App extends React.Component<{}, AppState> {
             let metrics = [];
             // const respData = JSON.parse(xhr.responseText);
             const respData = JSON.parse(xhr.responseText).map(metric => metric.name);
-            metrics = metrics.concat(respData.filter(metric => metric.endsWith(':unit_batchid')));
-            metrics = metrics.concat(respData.filter(metric => metric.endsWith(':unit_procedure')));
+            metrics = metrics.concat(respData.filter(metric => metric.endsWith(':unit_batchid')),
+                                     respData.filter(metric => metric.endsWith(':unit_procedure')));
             callback(metrics);
         };
         xhr.onabort = xhr.onerror = xhr.ontimeout = () => {
-            Debug.error("Failed to load labels");
+            Debug.error("Failed to load metrics by expression");
             callback([]);
         };
         xhr.send();

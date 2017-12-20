@@ -5,6 +5,7 @@ import {Option} from "./SelectionOption";
 import "./InterpolationSelection.less";
 
 
+
 export interface SelectionProps {
     options: Option[];
     value: any;
@@ -38,7 +39,7 @@ export class InterpolationIntervalSelection extends Component<Props, State> {
             <option key={option.value} value={option.value}>{option.value}</option>
         ));
         return (
-            <select value={this.props.value.value} onChange={this.onChange}>
+            <select onChange={this.onChange} defaultValue={options[5].props.value}>
                 {options}
             </select>
         )
@@ -51,7 +52,6 @@ export class InterpolationIntervalSelection extends Component<Props, State> {
             .from(select.querySelectorAll("option"))
             .filter((option) => option.selected)
             .map((option) => option.value);
-
         this.onSelectionChange(selection);
     };
 
