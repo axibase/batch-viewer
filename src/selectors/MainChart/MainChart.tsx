@@ -108,9 +108,9 @@ export class MainChart extends React.Component<Props, State> {
 
     public componentWillReceiveProps(nextProps) {
         if (this.state.collapsed) {
-            this.setState({deferredSeries: this.createSeries(nextProps.batches)})
+            this.setState({deferredSeries: this.createSeries({batches:nextProps.batches})})
         } else {
-            this.setState({series: this.createSeries(nextProps.batches)})
+            this.setState({series: this.createSeries({batches: nextProps.batches})})
         }
     }
 
@@ -142,7 +142,7 @@ export class MainChart extends React.Component<Props, State> {
 
     private onInterpolateIntervalChange(options: Option[]) {
         const interpolation = options.map((option) => option.data)[0];
-        this.setState((state, props) => ({
+        this.setState(() => ({
             selectedInterpolationInterval: interpolation,
             series: this.createSeries({interpolationInterval: interpolation}),
         }));
@@ -150,7 +150,7 @@ export class MainChart extends React.Component<Props, State> {
 
     private onInterpolateTypeChange(options: Option[]) {
         const interpolation = options.map((option) => option.data)[0];
-        this.setState((state, props) => ({
+        this.setState(() => ({
             selectedInterpolationType: interpolation,
             series: this.createSeries({interpolationType: interpolation}),
         }));
