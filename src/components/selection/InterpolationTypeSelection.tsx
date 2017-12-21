@@ -16,7 +16,7 @@ export class InterpolationTypeSelection extends Component<Props> {
 
     public render() {
         return (
-            <div className="fieldset" id="InterpolationTypeSelection">
+            <div id="InterpolationTypeSelection">
                 {this.selectionOptions}
             </div>
         );

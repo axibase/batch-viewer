@@ -48,19 +48,15 @@ Open **Data > Data Entry** page.
 
 ![](images/data-insert.png)
 
-Copy contents of the below files with sample data into the Commands area and click Send one by one.
+Copy contents of the below file with sample data into the Commands area and click Send.
 
-- [assets.txt](sample-data/assets.txt)
-- [temperature-1.txt](sample-data/temperature-1.txt)
-- [temperature-2.txt](sample-data/temperature-2.txt)
-- [pressure-1.txt](sample-data/pressure-1.txt)
-- [pressure-2.txt](sample-data/pressure-2.txt)
+- [commands.txt](sample-data/commands.txt)
 
-Verify that the Entities tab contains 10 entities `axi.asset-*`.
+Verify that the Entities tab contains 3 entities `axi.asset-*`.
 
 ![](images/asset-entities.png)
 
-Verify that the Metric tab contains metrics `axi.temperature` and `axi.pressure`.
+Verify that the Metric tab contains metrics `axi.asset-*`.
 
 ![](images/axi-metrics.png)
 
@@ -80,7 +76,7 @@ The viewer should display two sites in the top menu.
 
   Use `Ctrl + Click` or `⌘ + Click` to choose multiple sites and buildings.
 
-2. Once you have some buildings selected, you can view a list of equipments (assets) in the top-right panel. Select `axi.asset-3` and `axi.asset-7`.
+2. Once you have some buildings selected, you can view a list of equipments (assets) in the top-right panel. Select `axi.asset-2` and `axi.asset-2`.
 
   ![](images/assets.png)
 
@@ -100,7 +96,10 @@ The viewer should display two sites in the top menu.
 
   ![](images/timeline-overview.png)
 
-4. Click on batches `1440` and `1487` on the timeline and scroll down the page. You will see a time chart consisting of metrics for the selected assets for the interval of time to fit selected batches. Metrics for multiple batches are re-based to a start date in order to illustrate metric values relative to batch start time.
+4. Click on batches `1401` and `1409` on the timeline and scroll down the page. You will see a time chart consisting of metrics for the selected assets for the interval of time to fit selected batches. Metrics for multiple batches are re-based to a start date in order to illustrate metric values relative to batch start time.
 
   ![](images/timechart.png)
 
+5. Click on `Interpolation` to enable time series regularization with the specified period or step function.
+
+  ![](images/timechart-interpolate.png)
