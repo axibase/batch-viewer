@@ -109,13 +109,13 @@ export class AssetSelector extends React.Component<Props, State> {
 
     private toggleCollapse = () => {
         this.setState(({collapsed}) => ({collapsed: !collapsed}));
-    }
+    };
 
     private onAssetSelectionChange = (options: Option[]) => {
         const assets = options.map((option) => option.data) as Asset[];
         this.handleSelectionChange(assets);
         this.setState({selectedAssets: assets.map((asset) => asset.unitId)})
-    }
+    };
 
     private filterSites = (sites: string[]) => {
         const unitsBySite = filterAssets(this.props.assets, sites);
@@ -135,7 +135,7 @@ export class AssetSelector extends React.Component<Props, State> {
             visibleAssets: [],
             visibleBuildings,
         });
-    }
+    };
 
     private filterBuildings = (buildings: string[]) => {
         const visibleAssets = filterAssets(this.props.assets, this.state.selectedSites, buildings);
@@ -152,7 +152,7 @@ export class AssetSelector extends React.Component<Props, State> {
         });
 
         Debug.table("Top Level :: Selected buildings", buildings);
-    }
+    };
 
     private doInitialFilter(cachedSites: string[], cachedBuildings: string[]) {
         const assets = this.props.assets;

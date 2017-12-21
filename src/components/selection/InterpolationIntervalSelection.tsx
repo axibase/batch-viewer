@@ -1,41 +1,28 @@
 import React, {Component} from "react";
 
-import {CopyOptions} from "./CopyOptions";
 import {Option} from "./SelectionOption";
 
-import {ClearAll} from "./ClearAll";
-import "./Selection.less";
+import "./InterpolationSelection.less";
 
 export interface SelectionProps {
     options: Option[];
-    value: string | string[];
+    value: any;
     onChange?: (options: Option[]) => void;
     readonly?: boolean;
 }
 
 type Props = SelectionProps;
 
-export class Selection extends Component<Props> {
-    private root: HTMLElement;
+export class InterpolationIntervalSelection extends Component<Props> {
 
     public render() {
-        const {readonly} = this.props;
         return (
-                <div className="axi-select">
-                    <div className="axi-select-controls">
-                        <ClearAll onReset={this.reset} visible={!readonly && this.hasOptions}/>
-                        <CopyOptions from={this.root} visible={this.hasOptions}/>
-                    </div>
-                    <div ref={this.refRoot} className="pt-card pt-list-unstyled list-selected__list">
-                        {this.hasOptions ? this.selectionOptions : <NothingSelected/>}
-                    </div>
-                </div>
-        );
+            <div className="axi-select-dropdown" id="InterpolationIntervalSelection">
+                {this.hasOptions ? this.selectionOptions : <NothingSelected/>}
+            </div>
+        )
+            ;
     }
-
-    private reset = () => {
-        this.onSelectionChange([])
-    };
 
     private get hasOptions(): boolean {
         return this.props.options.length > 0;
@@ -43,14 +30,12 @@ export class Selection extends Component<Props> {
 
     private get selectionOptions(): JSX.Element {
         const options = this.props.options.map((option: Option) => (
-            <option key={option.id} value={option.id}>{option.value}</option>
+            <option key={option.value} value={option.value}>{option.value}</option>
         ));
         return (
-            <div className="axi-select-container">
-                <select multiple value={this.props.value} onChange={this.onChange}>
-                    {options}
-                </select>
-            </div>
+            <select onChange={this.onChange} defaultValue={options[5].props.value}>
+                {options}
+            </select>
         )
     }
 
@@ -61,20 +46,15 @@ export class Selection extends Component<Props> {
             .from(select.querySelectorAll("option"))
             .filter((option) => option.selected)
             .map((option) => option.value);
-
         this.onSelectionChange(selection);
     };
 
-    private onSelectionChange(value: string[]) {
+    private onSelectionChange(value: any[]) {
         const {options, onChange, readonly} = this.props;
         if (!readonly) {
             onChange(options.filter(({id}) => value.includes(id)));
         }
     }
-
-    private refRoot = (root) => {
-        this.root = root
-    };
 }
 
 export function NothingSelected({itemName = "item"}) {

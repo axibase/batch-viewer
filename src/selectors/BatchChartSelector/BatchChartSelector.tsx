@@ -51,7 +51,7 @@ export class BatchChartSelector extends React.Component<Props, State> {
                     <Selection
                         readonly
                         options={this.batchOptions}
-                        value={this.state.selectedBatches.map(batch => batch.batchId)}
+                        value={this.state.selectedBatches.map((batch) => batch.batchId)}
                     />
                 </Aside>
             </Section>

@@ -1,8 +1,8 @@
 import React from "react";
 import * as  Debug from "../../../debug/index";
 
-import { initializeWidget } from "../../../charts/Timechart";
-import { TimechartProps } from "./Timechart";
+import {initializeWidget} from "../../../charts/Timechart";
+import {TimechartProps} from "./Timechart";
 
 import DEFAULT_CONFIG from "./widgetConfig.js";
 
@@ -29,13 +29,19 @@ export class TimechartPlot extends React.Component<TimechartPlotProps, any> {
     }
 
     public shouldComponentUpdate(nextProps, nextState) {
-        const { props } = this;
-        if (isNaN(nextProps.width) || isNaN(nextProps.height)) { return false };
-        if (nextProps.startTime !== props.startTime) { return true };
-        if (nextProps.endTime !== props.endTime) { return true };
+        const {props} = this;
+        if (isNaN(nextProps.width) || isNaN(nextProps.height)) {
+            return false
+        }
+        if (nextProps.startTime !== props.startTime) {
+            return true
+        }
+        if (nextProps.endTime !== props.endTime) {
+            return true
+        }
         if (nextProps.series !== props.series) {
             return nextProps.series.length !== 0 || props.series.length !== 0;
-        };
+        }
         return false;
     }
 
@@ -45,10 +51,14 @@ export class TimechartPlot extends React.Component<TimechartPlotProps, any> {
 
     public componentWillReceiveProps(nextProps: TimechartPlotProps) {
         // If size changed -- resize
-        const { width, height } = this.props;
+        const {width, height} = this.props;
         if (width !== nextProps.width || height !== nextProps.height) {
-            if (isNaN(nextProps.height) || isNaN(nextProps.width)) { return; }
-            if (nextProps.height <= 0 || nextProps.width <= 0) { return; }
+            if (isNaN(nextProps.height) || isNaN(nextProps.width)) {
+                return;
+            }
+            if (nextProps.height <= 0 || nextProps.width <= 0) {
+                return;
+            }
             if (this.widget) {
                 this.widget.resize({
                     height: nextProps.height,
@@ -80,7 +90,9 @@ export class TimechartPlot extends React.Component<TimechartPlotProps, any> {
 
         const root = this.widgetRoot;
         // tslint:disable-next-line:triple-equals
-        if (!root) { return; }
+        if (!root) {
+            return;
+        }
         root.innerHTML = "";
 
         if (!width || width <= 0) {
@@ -94,15 +106,13 @@ export class TimechartPlot extends React.Component<TimechartPlotProps, any> {
         Debug.info("Timechart :: width =", width);
 
         const config = Object.assign(DEFAULT_CONFIG, {
-            series: series.map((batch) => Object.assign({
-                entity: "nurswgvml007",
-                metric: "cpu_busy",
-            }, batch)),
-        }, {
-           endtime: endTime || Date.now(),
-           initSize: {width, height},
-           starttime: startTime || Date.now() - 3600 * 1000,
-        })
+            series,
+            endtime: endTime || Date.now(),
+            initSize: {width, height},
+            starttime: startTime || Date.now() - 3600 * 1000,
+
+        });
+
         this.widget = initializeWidget(config, root);
     }
 

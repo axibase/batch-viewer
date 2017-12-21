@@ -1,15 +1,16 @@
 import React from "react";
 import * as Debug from "../../debug";
 
-import { AssetSelector, BatchChartSelector, MainChart } from "../../selectors";
-import { getAssetFromEntity, getBatchConfigurations, populateProcedures } from "../../utils/series";
+import {AssetSelector, BatchChartSelector, MainChart} from "../../selectors";
+import {getAssetFromEntity, getBatchConfigurations, populateProcedures} from "../../utils/series";
+import {InterpolationInterval, interpolationIntervals} from "./interpolationIntervals"
 
 import "./App.less";
 
 interface AppState {
     units: Asset[];
     batches: Batch[];
-    batchesForAssets: Batch[],
+    batchesForAssets: Batch[];
     selectedBatches: Batch[];
     selectedAssets: Asset[];
     timelineData: Batch[];
@@ -17,18 +18,12 @@ interface AppState {
 
 type State = AppState;
 
-const metrics = [
-    {
-        label: "Temperature",
-        metric: "axi.temperature",
-    },
-    {
-        label: "Pressure",
-        metric: "axi.pressure",
-    },
-]
-
 export class App extends React.Component<{}, AppState> {
+
+    private labels: string[] = ["Agitator Speed", "Jacket Temperature", "Product Temperature"];
+    private interpolationIntervals: InterpolationInterval[] = interpolationIntervals;
+    private interpolationTypes: string[] = ["AUTO", "LINEAR", "PREVIOUS"];
+
     constructor(props) {
         super(props);
         this.state = {
@@ -43,8 +38,13 @@ export class App extends React.Component<{}, AppState> {
 
     public componentDidMount() {
         this.loadAtsdEntities((entities) => {
-            let assets = entities.map(getAssetFromEntity);
+            const assets = entities.map(getAssetFromEntity);
             this.loadBatches(assets, (batches) => {
+                this.loadBatchesMetricsByLabels(entities, (metrics) => {
+                    for (const batch of batches) {
+                        batch.metrics = metrics[batch.unit];
+                    }
+                });
                 this.setState({units: assets, batches});
             });
         });
@@ -73,7 +73,9 @@ export class App extends React.Component<{}, AppState> {
     }
 
     private get batchChart() {
-        if (!this.hasSelectedAssets) { return; }
+        if (!this.hasSelectedAssets) {
+            return;
+        }
         return (
             <BatchChartSelector
                 batches={this.state.batchesForAssets}
@@ -83,11 +85,15 @@ export class App extends React.Component<{}, AppState> {
     }
 
     private get mainChart() {
-        if (!this.hasSelectedBatches) { return; }
+        if (!this.hasSelectedBatches) {
+            return;
+        }
         return (
             <MainChart
-                metrics={metrics}
+                labels={this.labels}
                 batches={this.state.selectedBatches}
+                interpolationIntervals={this.interpolationIntervals}
+                interpolationTypes={this.interpolationTypes}
             />
         );
     }
@@ -101,13 +107,13 @@ export class App extends React.Component<{}, AppState> {
     }
 
     private onAssetsChange = (selectedAssets: Asset[]) => {
-        function inAssets({ unit }: Batch) {
-            const idMatches = ({ unitId }) => unit === unitId;
+        function inAssets({unit}: Batch) {
+            const idMatches = ({unitId}) => unit === unitId;
             const position = selectedAssets.findIndex(idMatches);
             return position >= 0;
         }
 
-        this.setState(({ batches }: State) => {
+        this.setState(({batches}: State) => {
             const batchesForAssets = batches.filter(inAssets);
             return {
                 batchesForAssets,
@@ -118,12 +124,12 @@ export class App extends React.Component<{}, AppState> {
             Debug.table("App :: Assets changed", this.state.selectedAssets);
             Debug.table("App :: Batches changed", this.state.batchesForAssets);
         });
-    }
+    };
 
     private onBatchesChange = (selectedBatches: Batch[]) => {
-        this.setState({ selectedBatches });
+        this.setState({selectedBatches});
         Debug.table("App :: Selected batches changed", this.state.selectedBatches);
-    }
+    };
 
     private loadAtsdSeries(entity: string | string[], metric: string, callback: (respData: any[]) => void) {
         const xhr = new XMLHttpRequest();
@@ -134,14 +140,15 @@ export class App extends React.Component<{}, AppState> {
         };
         xhr.onabort = xhr.onerror = xhr.ontimeout = () => {
             Debug.error("Failed to load series");
+            callback([]);
         };
         if (Array.isArray(entity)) {
             xhr.send(JSON.stringify({
-                entities: entity, metric, interval: { count: 1, unit: "MONTH"},
+                entities: entity, interval: {count: 1, unit: "YEAR"}, metric,
             }));
         } else {
             xhr.send(JSON.stringify({
-                entity, metric, interval: { count: 1, unit: "MONTH"},
+                entity, interval: {count: 1, unit: "YEAR"}, metric,
             }));
         }
     }
@@ -155,57 +162,116 @@ export class App extends React.Component<{}, AppState> {
             callback(body);
         };
         xhr.onabort = xhr.onerror = xhr.ontimeout = () => {
-            Debug.error("Failed to load series");
-        }
+            Debug.error("Failed to load entities");
+        };
         xhr.send();
     }
 
+    private loadEntityMetricsByLabels(entity: string, callback: (respData: any) => void) {
+        const xhr = new XMLHttpRequest();
+        const expr = this.labels.map((l) => "label = '" + l + "'").join(" or ");
+        xhr.open("GET", url`/api/v1/entities/${entity}/metrics?expression=${expr}`, true);
+        xhr.onload = () => {
+            const metrics = JSON.parse(xhr.responseText).map((metric) => {
+                return {label: metric.label, name: metric.name, interpolate: metric.interpolate}
+            });
+            callback(metrics);
+        };
+        xhr.onabort = xhr.onerror = xhr.ontimeout = () => {
+            Debug.error("Failed to load labels");
+            callback([]);
+        };
+        xhr.send();
+    }
+
+    private loadMetricsByExpression(entity: string, callback: (respData: any) => void) {
+        const xhr = new XMLHttpRequest();
+        const expr = "name like '*:unit_procedure' or name like '*:unit_batchid'";
+        xhr.open("GET", url`/api/v1/entities/${entity}/metrics?expression=${expr}`, true);
+        xhr.onload = () => {
+            let metrics = [];
+            // const respData = JSON.parse(xhr.responseText);
+            const respData = JSON.parse(xhr.responseText).map((metric) => metric.name);
+            metrics = metrics.concat(respData.filter((metric) => metric.endsWith(":unit_batchid")),
+                respData.filter((metric) => metric.endsWith(":unit_procedure")));
+            callback(metrics);
+        };
+        xhr.onabort = xhr.onerror = xhr.ontimeout = () => {
+            Debug.error("Failed to load metrics by expression");
+            callback([]);
+        };
+        xhr.send();
+    }
+
+    private loadBatchesMetricsByLabels(entities: any[], callback: (respData: any) => void) {
+        const batchMetrics = {};
+        let reqCounter = entities.length;
+
+        for (const entity of entities) {
+            const name = entity.name;
+            this.loadEntityMetricsByLabels(name, (metrics) => {
+                batchMetrics[name] = metrics;
+                if (--reqCounter === 0 || metrics === []) {
+                    callback(batchMetrics)
+                }
+            });
+        }
+        callback(batchMetrics);
+    }
+
     private loadBatches(assets: Asset[], callback: (batches: Batch[]) => void) {
-        let entities = assets.map(a => a.unitId);
-        let batchesResponse: any[];
-        let assetResponse: any[][];
-        // Load batch Info
-        this.loadAtsdSeries(entities, "axi.Unit_BatchID", (resp) => {
-            batchesResponse = resp;
-            if (assetResponse) {
-                let batches = this.joinBatchesAndProcedures(assets, batchesResponse, assetResponse);
-                callback(batches);
-            }
-        });
-        this.loadAtsdSeries(entities, "axi.Unit_Procedure", (resp) => {
-            assetResponse = resp;
-            if (batchesResponse) {
-                let batches = this.joinBatchesAndProcedures(assets, batchesResponse, assetResponse);
-                callback(batches);
-            }
-        });
+        let batchList = [];
+        const entities = assets.map((a) => a.unitId);
+        let reqCounter = entities.length;
+        for (const entity of entities) {
+            this.loadMetricsByExpression(entity, (metrics) => {
+                // Load batch Info
+                if (metrics.length === 2) {
+                    const batchId = metrics[0];
+                    const procedure = metrics[1];
+                    this.loadAtsdSeries(entity, batchId, (batchesResponse) => {
+                        this.loadAtsdSeries(entity, procedure, (assetResponse) => {
+                            const batches = this.joinBatchesAndProcedures(assets, batchesResponse, assetResponse);
+                            batchList = batchList.concat(batches);
+                            if (--reqCounter === 0 || batchesResponse === [] || assetResponse === []) {
+                                callback(batchList)
+                            }
+                        });
+                    });
+
+                } else {
+                    --reqCounter;
+                    Debug.info("No batch info for asset:", entity);
+                }
+
+            });
+        }
     }
 
     private joinBatchesAndProcedures(assets: Asset[], batchResponse: any[], procedureResponse: any[]) {
-        let map = new Map();
-        for (let asset of assets) {
+        const map = new Map();
+        for (const asset of assets) {
             map.set(asset.unitId, {
                 asset,
                 batches: [],
                 procedures: [],
             })
-        };
-
-        for (let group of batchResponse) {
-            let join = map.get(group.entity);
+        }
+        for (const group of batchResponse) {
+            const join = map.get(group.entity);
             join.batches = getBatchConfigurations(join.asset, group.data);
         }
 
-        for (let group of procedureResponse) {
-            let join = map.get(group.entity);
+        for (const group of procedureResponse) {
+            const join = map.get(group.entity);
             join.procedures = group.data;
         }
         let result = [];
         map.forEach((v) => {
-            let batches = v.batches;
+            const batches = v.batches;
             populateProcedures(batches, v.procedures);
             result = result.concat(batches);
-        })
+        });
         return result;
     }
 }
