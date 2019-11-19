@@ -206,7 +206,7 @@ export class BatchTimeline {
             .attr("y", 1)
             .attr("height", miniHeight - 1);
 
-        
+
         this.brushArea
             .select(".extent")
             .classed("axi-brush-extent", true)
@@ -219,7 +219,7 @@ export class BatchTimeline {
             .attr("height", miniHeight - 1)
             .attr("y", 1)
             .attr("width", this.brushTimescale(this.selectedTimeSpan[0]));
-        
+
         this.brushArea
             .select(".brush")
             .append("rect")
@@ -341,7 +341,7 @@ export class BatchTimeline {
                     ]);
                 }
             });
-        
+
         searchStatus = this.batchSearchArea
             .append("p")
             .classed("axi-batch-search__status", true)
@@ -457,7 +457,7 @@ export class BatchTimeline {
             .select("#plot-viewport")
             .select("rect")
             .attr("width", plotWidth);
-    
+
         this.plot
             .select("rect")
             .attr("width", plotWidth);
@@ -534,7 +534,7 @@ export class BatchTimeline {
 
     /**
      * @private
-     * @param {number[2]} timespan 
+     * @param {number[2]} timespan
      */
     focusTimespan(timespan = this.selectedTimeSpan) {
         timespan = intersect(timespan, this.timeSpan);
@@ -668,7 +668,7 @@ export class BatchTimeline {
 
         lanes
             .classed("lane--hidden", ({key}) => this.dimmedUnits && includes(this.dimmedUnits, key))
-            .attr("transform", d => `translate(0,${this.plotLanescale(d.key)+laneOffset})`);            
+            .attr("transform", d => `translate(0,${this.plotLanescale(d.key)+laneOffset})`);
 
         lanes.enter()
             .append("g")
@@ -797,7 +797,7 @@ export class BatchTimeline {
         );
 
         const selected = procedure => {
-            return ! this.displayedProcedures 
+            return ! this.displayedProcedures
                   || this.displayedProcedures.indexOf(procedure.name) >= 0;
         }
 
@@ -1019,7 +1019,7 @@ export class BatchTimeline {
                 }
                 selectionPrevented = true;
             }
-            
+
             let offset = d3.event.x - panX;
             // Reset panX to prevent multiple rescaling
             panX = d3.event.x;
@@ -1197,7 +1197,7 @@ function ellipsisInMiddle(text, nLeft, nRight) {
     return `${text.slice(0, nLeft)}&hellip;${text.slice(text.length - nRight)}`;
 }
 
-const formatTime = getDefaultTimeFormat({ isUTC: false });
+const formatTime = new TimeFormatter("local").getDefaultTimeFormat();
 
 function formatTimeIntv(time) {
     let hours = Math.round(+time / 1000);
@@ -1208,6 +1208,6 @@ function formatTimeIntv(time) {
     let minutes = hours % 60;
     hours = (hours - minutes) / 60;
     if (hours === 0) { return `${minutes}m:${seconds}s`}
-    
+
     return `${hours}h:${minutes}m:${seconds}s`;
 }
